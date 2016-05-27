@@ -1,8 +1,10 @@
 ﻿@model Webwarehouse.Model.Entities.Operation
 
-<script src="~/Scripts/jquery-1.8.2.min.js"></script>
+
 <script src="~/Scripts/jquery.validate.min.js"></script>
 <script src="~/Scripts/jquery.validate.unobtrusive.min.js"></script>
+<script src="@Url.Content("~/Scripts/validations/OperationValidation.js")" type="text/javascript"></script>
+
 @if (Model.GoodAttached != null)
 {
     using (Ajax.BeginForm("Add", new AjaxOptions { UpdateTargetId = "addOper" }))
@@ -21,7 +23,7 @@
             <label>Количество товара</label>
         </div>
         <div class="editor-field">
-            @Html.EditorFor(model => model.Quantity)
+            @Html.EditorFor(model => model.Quantity, new { @class = "goodNumber" })
             @Html.ValidationMessageFor(model => model.Quantity)
         </div>
 
@@ -45,6 +47,7 @@
     </fieldset>
     }
 }
+
 @if (TempData["opMessage"] != null)
 {
     <script type="text/javascript">

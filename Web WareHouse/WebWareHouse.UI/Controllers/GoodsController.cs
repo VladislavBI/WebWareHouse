@@ -98,9 +98,9 @@ namespace Webwarehouse.UI.Controllers
                         a.GoodName,
                         a.Price,
                     });
-            
 
 
+            int curPage = page;
             //get total pages and rows quantity
                 int totalRecords = GoodsResults.Count();
                 var totalPages = (int)Math.Ceiling((float)totalRecords / (float)rows);

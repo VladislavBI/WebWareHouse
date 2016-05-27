@@ -498,7 +498,7 @@ textarea {
 }
 
 /* styles for validation helpers */
-.field-validation-error, .pswerror, .txterror {
+.field-validation-error, .pswerror, .txterror, .qtyerror {
     color: #e80c4d;
     font-weight: bold;
 }

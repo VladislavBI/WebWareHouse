@@ -48,6 +48,9 @@ $(function () {
             repeatitems: false,
             Id: "0"
         },
+        autowidth: true,
+        multiselect: false,
+        
         //to get good's full view when row is selected
         onSelectRow:
 
@@ -92,9 +95,9 @@ $(function () {
                 $("#goodDetInfo").html(partialViewResult);
             });
         },
-        autowidth: true,
-        multiselect: false
-    }).navGrid('#pager', { edit: false, add: true, del: true, search: false, refresh: true },
+
+    }).navGrid('#pager', { edit: false, add: true, del: true, search: false, refresh: true, refreshstate: "current" },
+       
         {
             // edit options
             zIndex: 100,
@@ -139,6 +142,7 @@ $(function () {
             closeOnEscape: true,
             closeAfterDelete: true,
             recreateForm: true,
+            
             msg: "Are you sure you want to delete this task?",
             afterComplete: function (response) {
                 if (response.responseText) {
@@ -156,7 +160,7 @@ $(function () {
             keys: true,
             //to change view after edit
             aftersavefunc: function (response) {
-                alert("aftersave");
+
                 var myGrid = $('#GridTable'),
                 selRowId = myGrid.jqGrid('getGridParam', 'selrow'),
                 celValue = myGrid.jqGrid('getCell', selRowId, 'GoodId');
