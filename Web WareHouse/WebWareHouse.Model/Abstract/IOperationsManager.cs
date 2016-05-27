@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using WebWareHouse.Model.Entities;
+using Webwarehouse.Model.Entities;
 
-namespace WebWareHouse.Model.Abstract
+namespace Webwarehouse.Model.Abstract
 {
     public interface IOperationsManager
     {

@@ -5,7 +5,7 @@
     <title>@ViewBag.Title - My ASP.NET MVC Application</title>
     <link href="~/favicon.ico" rel="shortcut icon" type="image/x-icon" />
     <meta name="viewport" content="width=device-width" />
-
+    <link href="~/Content/DivTable.css" rel="stylesheet" type="text/css" />
     @Styles.Render("~/Content/css")
     @Scripts.Render("~/bundles/modernizr")
 </head>
@@ -20,33 +20,46 @@
                     @Html.Partial("_LoginPartial")
                 </section>
                 <nav>
-                    <ul id="menu">
-                        <li>@Html.ActionLink("Home", "Index", "Home")</li>
-                        <li>@Html.ActionLink("About", "About", "Home")</li>
-                        <li>@Html.ActionLink("Contact", "Contact", "Home")</li>
+                    <ul id="menu">  
+                        <li>@Html.ActionLink("Главная страница", "Index", "Home")</li>
                     </ul>
                 </nav>
             </div>
         </div>
     </header>
-    <div id="body">
+    <div id ="body">
         @RenderSection("featured", required: false)
-        @*@{Html.RenderAction("AddGood", "Goods");}*@
-        @{Html.RenderAction("GoodListShow", "Goods");}
-        @{Html.RenderAction("DetailInfo", "Goods");}
         <section class="content-wrapper main-content clear-fix">
             @RenderBody()
         </section>
     </div>
+    <div id="body">
+        <div class="tableF">
+            <div class="tr">
+                  <div class="td" style="width: 380px">
+                      @{Html.RenderAction("DetailInfo", "Goods");}
+
+                      <div id="addOper">
+
+                      </div>
+                  </div>
+                <div class="td">
+                  
+                    @{Html.RenderAction("GoodListShow", "Goods");}
+                </div>
+            </div>
+        </div>
+    </div>
     <footer>
         <div class="content-wrapper">
             <div class="float-left">
-                <p>&copy; @DateTime.Now.Year - My ASP.NET MVC Application</p>
+                <p>&copy; @DateTime.Now.Year - Web Warehouse</p>
             </div>
         </div>
     </footer>
 
-    @*@Scripts.Render("~/bundles/jquery")*@
+
+    @*@Scripts.Render("~/bundles/homeBundle")*@
     @RenderSection("scripts", required: false)
 </body>
 </html>

@@ -2,10 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
-using WebWareHouse.Model.Concrete;
-using WebWareHouse.Model.Entities;
+using Webwarehouse.Model.Concrete;
+using Webwarehouse.Model.Entities;
 
-namespace WebWareHouse.UI.Models
+namespace Webwarehouse.UI.Models
 {
     public class GoodStatisticViewModel
     {
@@ -15,6 +15,7 @@ namespace WebWareHouse.UI.Models
         public decimal Price { get; set; }
         public int TotalQuantity { get; set; }
         public decimal TotalPrice { get; set; }
+
         public GoodStatisticViewModel()
         { }
         public GoodStatisticViewModel(int gId)
@@ -30,16 +31,19 @@ namespace WebWareHouse.UI.Models
                 {
                     GoodName = cont.Goods.Where(x => x.GoodId == gId).Select(x => x.GoodName).FirstOrDefault();
                 }
-                Price = cont.Goods.Where(x => x.GoodId == gId).Select(x => x.Price).FirstOrDefault();
                 try
                 {
-                    TotalQuantity = cont.Operations.Where(x => x.GoodId == gId && x.OperType == OperationType.Income).Select(x => x.Quantity).Sum();
-                    TotalQuantity += cont.Operations.Where(x => x.GoodId == gId && x.OperType == OperationType.Outcome).Select(x => x.Quantity).Sum();
+                    Price = cont.Goods.Where(x => x.GoodId == gId).Select(x => x.Price).FirstOrDefault();
+                    if (cont.Operations.Where(x => x.GoodId == gId && x.OperType == OperationType.Income).Any())
+                    TotalQuantity = (int)cont.Operations.Where(x => x.GoodId == gId && x.OperType == OperationType.Income).Select(x => x.Quantity).Sum();
+                    if (cont.Operations.Where(x => x.GoodId == gId && x.OperType == OperationType.Outcome).Any())
+                    TotalQuantity -= (int)cont.Operations.Where(x => x.GoodId == gId && x.OperType == OperationType.Outcome).Select(x => x.Quantity).Sum();
 
                     TotalPrice = Price * TotalQuantity;
                 }
                 catch
                 {
+                    Price = 0;
                     TotalQuantity = 0;
                     TotalPrice = 0;
                 }

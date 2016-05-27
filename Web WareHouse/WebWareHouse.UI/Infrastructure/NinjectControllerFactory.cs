@@ -4,10 +4,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
-using WebWareHouse.Model.Abstract;
-using WebWareHouse.Model.Concrete;
+using Webwarehouse.Model.Abstract;
+using Webwarehouse.Model.Concrete;
 
-namespace WebWareHouse.UI.Infrastructure
+namespace Webwarehouse.UI.Infrastructure
 {
     public class NinjectControllerFactory: DefaultControllerFactory
     {

@@ -1,7 +1,7 @@
 ﻿using System.Web;
 using System.Web.Optimization;
 
-namespace WebWareHouse.UI
+namespace Webwarehouse.UI
 {
     public class BundleConfig
     {
@@ -9,13 +9,17 @@ namespace WebWareHouse.UI
         public static void RegisterBundles(BundleCollection bundles)
         {
             bundles.Add(new ScriptBundle("~/bundles/jquery").Include(
-                        "~/Scripts/jquery-{version}.js"));
+                        "~/Scripts/jquery-{version}.js",
+                        "~/Scripts/JQGridGoods.js"));
 
             bundles.Add(new ScriptBundle("~/bundles/jqueryui").Include(
                         "~/Scripts/jquery-ui-{version}.js"));
 
             bundles.Add(new ScriptBundle("~/bundles/jqueryval").Include(
                         "~/Scripts/jquery.unobtrusive*",
+                        "~/Scripts/jquery.validate*"));
+
+            bundles.Add(new ScriptBundle("~/bundles/homeBundle").Include(
                         "~/Scripts/jquery.validate*"));
 
             // Use the development version of Modernizr to develop with and learn from. Then, when you're
@@ -37,6 +41,7 @@ namespace WebWareHouse.UI
                         "~/Content/themes/base/jquery.ui.tabs.css",
                         "~/Content/themes/base/jquery.ui.datepicker.css",
                         "~/Content/themes/base/jquery.ui.progressbar.css",
+                        "~/Content/Custom/MyCss.css",
                         "~/Content/themes/base/jquery.ui.theme.css"));
         }
     }

@@ -4,10 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Web;
-using WebWareHouse.Model.Abstract;
-using WebWareHouse.Model.Entities;
+using Webwarehouse.Model.Abstract;
+using Webwarehouse.Model.Entities;
 
-namespace WebWareHouse.Model.Concrete
+namespace Webwarehouse.Model.Concrete
 {
     public class EFGoodsManager : IGoodsManager
     {

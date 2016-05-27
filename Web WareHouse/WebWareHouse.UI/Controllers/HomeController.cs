@@ -3,17 +3,26 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
-using WebWareHouse.Model.Abstract;
-using WebWareHouse.Model.Entities;
+using Webwarehouse.Model.Abstract;
+using Webwarehouse.Model.Concrete;
+using Webwarehouse.Model.Entities;
 
-namespace WebWareHouse.UI.Controllers
+namespace Webwarehouse.UI.Controllers
 {
     public class HomeController : Controller
     {
 
         public ActionResult Index()
         {
-            ViewBag.Message = "Modify this template to jump-start your ASP.NET MVC application.";
+            
+            if(Session["UserId"]==null)
+            {
+                string s = User.Identity.Name;
+                    using(WarehouseContext cont=new WarehouseContext())
+	                {
+                       Session["UserId"]=cont.UserProfiles.FirstOrDefault(x=>x.UserName==s).UserId;
+	                }
+            }
             return View();
         }
 

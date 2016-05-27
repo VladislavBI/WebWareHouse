@@ -1,18 +1,18 @@
-namespace WebWareHouse.Model.Migrations
+namespace Webwarehouse.Model.Migrations
 {
     using System;
     using System.Data.Entity;
     using System.Data.Entity.Migrations;
     using System.Linq;
 
-    internal sealed class Configuration : DbMigrationsConfiguration<WebWareHouse.Model.Concrete.WarehouseContext>
+    internal sealed class Configuration : DbMigrationsConfiguration<Webwarehouse.Model.Concrete.WarehouseContext>
     {
         public Configuration()
         {
             AutomaticMigrationsEnabled = false;
         }
 
-        protected override void Seed(WebWareHouse.Model.Concrete.WarehouseContext context)
+        protected override void Seed(Webwarehouse.Model.Concrete.WarehouseContext context)
         {
             //  This method will be called after migrating to the latest version.
 

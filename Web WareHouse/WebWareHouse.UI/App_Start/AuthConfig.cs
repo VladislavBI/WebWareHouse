@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Microsoft.Web.WebPages.OAuth;
-using WebWareHouse.Model.Entities;
+using Webwarehouse.Model.Entities;
 
-namespace WebWareHouse.UI
+namespace Webwarehouse.UI
 {
     public static class AuthConfig
     {

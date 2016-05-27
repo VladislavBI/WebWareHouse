@@ -1,0 +1,13 @@
+﻿.table {
+    display:table
+}
+.tr {
+    display:table-row
+}
+.td {
+    display:table-cell
+}
+.tableF{
+    display:table;
+    width:90%;   
+}

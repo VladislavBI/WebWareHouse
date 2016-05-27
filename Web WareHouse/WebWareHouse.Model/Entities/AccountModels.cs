@@ -6,7 +6,8 @@ using System.Data.Entity;
 using System.Globalization;
 using System.Web.Security;
 
-namespace WebWareHouse.Model.Entities
+
+namespace Webwarehouse.Model.Entities
 {
         [Table("UserProfile")]
         public class UserProfile
@@ -30,19 +31,23 @@ namespace WebWareHouse.Model.Entities
         public class LocalPasswordModel
         {
             [Required]
+            [StringLength(255, ErrorMessage = "Пароль должен содержать не менее {2} символа.", MinimumLength = 1)]
             [DataType(DataType.Password)]
             [Display(Name = "Current password")]
+           
             public string OldPassword { get; set; }
 
             [Required]
-            [StringLength(100, ErrorMessage = "The {0} must be at least {2} characters long.", MinimumLength = 6)]
+            [StringLength(255, ErrorMessage = "Пароль должен содержать не менее {2} символа.", MinimumLength = 3)]
             [DataType(DataType.Password)]
             [Display(Name = "New password")]
+            
             public string NewPassword { get; set; }
 
             [DataType(DataType.Password)]
             [Display(Name = "Confirm new password")]
-            [Compare("NewPassword", ErrorMessage = "The new password and confirmation password do not match.")]
+            [Compare("NewPassword", ErrorMessage = "Пароли не совпадают.")]
+           
             public string ConfirmPassword { get; set; }
         }
 
@@ -50,11 +55,13 @@ namespace WebWareHouse.Model.Entities
         {
             [Required]
             [Display(Name = "User name")]
+
             public string UserName { get; set; }
 
             [Required]
             [DataType(DataType.Password)]
             [Display(Name = "Password")]
+            
             public string Password { get; set; }
 
             [Display(Name = "Remember me?")]
@@ -64,19 +71,18 @@ namespace WebWareHouse.Model.Entities
         public class RegisterModel
         {
             [Required]
-            [StringLength(255, ErrorMessage = "The {0} must be at least {2} characters long.", MinimumLength = 1)]
             [Display(Name = "User name")]
             public string UserName { get; set; }
 
             [Required]
-            [StringLength(255, ErrorMessage = "The {0} must be at least {2} characters long.", MinimumLength = 3)]
+            [StringLength(255, ErrorMessage = "Пароль должен содержать не менее {2} символа.", MinimumLength = 3)]
             [DataType(DataType.Password)]
             [Display(Name = "Password")]
             public string Password { get; set; }
 
             [DataType(DataType.Password)]
             [Display(Name = "Confirm password")]
-            [Compare("Password", ErrorMessage = "The password and confirmation password do not match.")]
+            [Compare("Password", ErrorMessage = "Пароли не совпадают.")]
             public string ConfirmPassword { get; set; }
         }
 

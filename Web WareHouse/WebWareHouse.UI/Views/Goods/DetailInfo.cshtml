@@ -1,4 +1,4 @@
-﻿@model WebWareHouse.UI.Models.GoodStatisticViewModel
+﻿@model Webwarehouse.UI.Models.GoodStatisticViewModel
 <div id="goodDetInfo">
     <p>Название товара: @Model.GoodName</p>
     <p>Цена товара:@Model.Price</p>
@@ -7,12 +7,25 @@
 </div>
 @if (@Model.GoodId != -1)
 {
-    using (Ajax.BeginForm("OperationSelector", new AjaxOptions { UpdateTargetId = "foo", OnSuccess = "onSuccess" }))
-    {
-
-        @Html.Hidden("idVal", Model.GoodId);
-    <input type="submit" name="Command" value="Статистика операций" />
-    <input type="submit" name="Command" value="Добавить операцию" />
-    }
+    <div class="table">
+        <div class="tr">
+            <div class="td">
+                @using (Ajax.BeginForm("OperationSelector", new AjaxOptions { UpdateTargetId = "foo", OnSuccess = "onSuccess" }))
+                {
+                @Html.Hidden("idVal", Model.GoodId);
+                <input type="submit" name="Command" value="Статистика операций" />
+                }
+            </div>
+            <div class="td">
+                @using (Ajax.BeginForm("Add", "Operations", new AjaxOptions { UpdateTargetId = "addOper", HttpMethod = "Get" }))
+                {
+                @Html.Hidden("idVal", Model.GoodId);
+                <input type="submit" name="Command" value="Добавить операцию" />
+                }
+            </div>
+        </div>
+    </div>
+    
+    
 }
 

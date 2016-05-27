@@ -3,45 +3,61 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
-using WebWareHouse.Model.Concrete;
-using WebWareHouse.Model.Entities;
+using Webwarehouse.Model.Concrete;
+using Webwarehouse.Model.Entities;
 
-namespace WebWareHouse.UI.Controllers
+namespace Webwarehouse.UI.Controllers
 {
     public class OperationsController : Controller
     {
         WarehouseContext cont = new WarehouseContext();
 
-        public ActionResult Add(int goodId)
+        public ActionResult Add(object idVal)
         {
+            int id;
+            try
+            {
+                string[] a = (string[])idVal;
+                id = Convert.ToInt32(a[0]);
+            }
+            catch (Exception)
+            {
+                    return PartialView(new Operation());
+            }
+           
+            
             Good g;
             using (cont = new WarehouseContext())
             {
-                g = cont.Goods.FirstOrDefault(x => x.GoodId == goodId);
+                g = cont.Goods.FirstOrDefault(x => x.GoodId == id);
             }
-
+            TempData["goodId"] = g.GoodId;
             Operation op = new Operation() { GoodAttached = g };
-            return View(op);
+            return PartialView(op);
         }
         [HttpPost]
-        public RedirectToRouteResult Add(Operation op)
+        public ActionResult Add(Operation op)
         {
             op.OperationTime = DateTime.Now;
-            if (op.OperType == OperationType.Outcome)
-            {
-                op.Quantity *= -1;
-            }
-            using (cont = new WarehouseContext())
-            {
-                int uId = Convert.ToInt32(Session["UserId"]);
-                UserProfile us = cont.UserProfiles.FirstOrDefault(x => x.UserId == uId);
-                op.User = us;
+            op.GoodId = (int)TempData["goodId"];
+             if (op.OperType==OperationType.Outcome&&!GoodEnought(op.GoodId, op.Quantity))
+                {
+                    TempData["opMessage"]= "У вас не хватает товара";
+                }
+             else
+	        {
+                using (cont = new WarehouseContext())
+                {
+                    int uId = Convert.ToInt32(Session["UserId"]);
+                    UserProfile us = cont.UserProfiles.FirstOrDefault(x => x.UserId == uId);
+                    op.User = us;
+                    cont.Operations.Add(op);
+                    cont.SaveChanges();
+                }
+	        }
 
-                cont.Operations.Add(op);
-                cont.SaveChanges();
-            }
 
-            return RedirectToAction("Index", "Home");
+             return PartialView(new Operation());
         }
 
         public ActionResult GetOperationsList(int goodId)
@@ -89,5 +105,21 @@ namespace WebWareHouse.UI.Controllers
             return Json(jsonData, JsonRequestBehavior.AllowGet);
         }
 
+
+        bool GoodEnought(int goodId, int opQty)
+        {
+            int left = 0;
+            using (cont = new WarehouseContext())
+            {
+                if (cont.Operations.Where(x => x.GoodId == goodId && x.OperType == OperationType.Income).Any())
+                left = cont.Operations.Where(x => x.GoodId == goodId&&x.OperType==OperationType.Income).Select(z => z.Quantity).Sum();
+                if (cont.Operations.Where(x => x.GoodId == goodId && x.OperType == OperationType.Outcome).Any())
+                left -= cont.Operations.Where(x => x.GoodId == goodId && x.OperType == OperationType.Outcome).Select(z => z.Quantity).Sum();
+            }
+            if ((left-opQty) >= 0)
+                return true;
+            else
+                return false;
+        }
     }
 }
