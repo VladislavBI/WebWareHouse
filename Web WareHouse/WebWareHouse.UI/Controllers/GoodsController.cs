@@ -108,7 +108,7 @@ namespace Webwarehouse.UI.Controllers
             //choose parameter to sort, sorting
                 switch (sidx)
                 {
-                case "Name":
+                /*case "Name":
                     if (sord.ToUpper() == "DESC")
                     {
                         //ordering
@@ -121,17 +121,17 @@ namespace Webwarehouse.UI.Controllers
                         GoodsResults = GoodsResults.OrderBy(s => s.GoodName);
                         GoodsResults = GoodsResults.Skip(pageIndex * pageSize).Take(pageSize);
                     }
-                    break;
+                    break;*/
 
                 case "Price":
                     if (sord.ToUpper() == "DESC")
                     {
-                        GoodsResults = GoodsResults.OrderByDescending(s => s.GoodName);
+                        GoodsResults = GoodsResults.OrderByDescending(s => s.Price);
                         GoodsResults = GoodsResults.Skip(pageIndex * pageSize).Take(pageSize);
                     }
                     else
                     {
-                        GoodsResults = GoodsResults.OrderBy(s => s.GoodName);
+                        GoodsResults = GoodsResults.OrderBy(s => s.Price);
                         GoodsResults = GoodsResults.Skip(pageIndex * pageSize).Take(pageSize);
                     }
                     break;

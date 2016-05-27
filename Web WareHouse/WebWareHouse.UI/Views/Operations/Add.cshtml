@@ -14,7 +14,7 @@
         <legend>Operation</legend>
        
         <div class="editor-label">
-           <label>@Model.GoodAttached.GoodName</label>
+           <label>Goods name: @Model.GoodAttached.GoodName</label>
         </div>
         
         <div class="editor-label">
@@ -44,11 +44,6 @@
         </p>
     </fieldset>
     }
-
-<div>
-    @Html.ActionLink("Back to List", "Index")
-</div>
-
 }
 @if (TempData["opMessage"] != null)
 {

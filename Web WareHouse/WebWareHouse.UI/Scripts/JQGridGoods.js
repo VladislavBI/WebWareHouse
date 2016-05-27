@@ -18,12 +18,18 @@ $(function () {
         colNames: ['GoodId', 'Имя', 'Цена'],
         colModel: [
             { key: true, hidden: true, name: 'GoodId', index: 'GoodId', editable: true },
-            { key: false, name: 'GoodName', index: 'GoodName', editable: true, sortable: true, editrules: { required: true, custom: true, custom_func: notATag } },
+            {
+                key: false, name: 'GoodName', index: 'GoodName', editable: true, sortable: true,
+                editrules: {
+                    required: true, custom: true, custom_func: notATag
+                }
+            },
+            
             {
                 key: false, name: 'Price', index: 'Price', editable: true, sortable: true, formatter: numFormat,
                 unformat: numUnformat,
                 //sorttype: 'float',
-                editrules: { required: true, custom: true, custom_func: figureValid  }
+                editrules: { required: true, custom: true, custom_func: figureValid}
             }, ],
         pager: jQuery('#pager'),
         rowNum: 10,
@@ -33,6 +39,7 @@ $(function () {
         caption: 'Список товаров',
         sortable: true,
         emptyrecords: 'No records to display',
+        cellsubmit : 'remote',
         jsonReader: {
             root: "rows",
             page: "page",
@@ -41,6 +48,7 @@ $(function () {
             repeatitems: false,
             Id: "0"
         },
+        //to get good's full view when row is selected
         onSelectRow:
 
             function () {
@@ -56,13 +64,33 @@ $(function () {
                     $("#goodDetInfo").html(partialViewResult);
                 });
             },
-        beforeSubmit: function (postdata, formid) {
-            //more validations
-            if ($('#exec').val() == "") {
-                $('#exec').addClass("ui-state-highlight");
-                return [false, 'ERROR MESSAGE']; //error
-            }
-            return [true, '']; // no error
+        gridComplete:
+            function () {
+                var myGrid = $('#GridTable'),
+                selRowId = myGrid.jqGrid('getGridParam', 'selrow'),
+                celValue = myGrid.jqGrid('getCell', selRowId, 'GoodId');
+                $.ajax({
+                    url: "/Goods/DetailInfo",
+                    type: "GET",
+                    data: { id: celValue }
+                })
+                .done(function (partialViewResult) {
+                    $("#goodDetInfo").html(partialViewResult);
+                });
+            },
+        //to change good's full view after row deleting
+        loadComplete: function(data){
+            var myGrid = $('#GridTable'),
+                selRowId = myGrid.jqGrid('getGridParam', 'selrow'),
+                celValue = myGrid.jqGrid('getCell', selRowId, 'GoodId');
+            $.ajax({
+                url: "/Goods/DetailInfo",
+                type: "GET",
+                data: { id: celValue }
+            })
+            .done(function (partialViewResult) {
+                $("#goodDetInfo").html(partialViewResult);
+            });
         },
         autowidth: true,
         multiselect: false
@@ -78,6 +106,17 @@ $(function () {
                 if (response.responseText) {
                     alert(response.responseText);
                 }
+                var myGrid = $('#GridTable'),
+                selRowId = myGrid.jqGrid('getGridParam', 'selrow'),
+                celValue = myGrid.jqGrid('getCell', selRowId, 'GoodId');
+                $.ajax({
+                    url: "/Goods/DetailInfo",
+                    type: "GET",
+                    data: { id: celValue }
+                })
+                .done(function (partialViewResult) {
+                    $("#goodDetInfo").html(partialViewResult);
+                });
             }
         },
         {
@@ -115,9 +154,28 @@ $(function () {
         cancel: true,
         editParams: {
             keys: true,
-        }
+            //to change view after edit
+            aftersavefunc: function (response) {
+                alert("aftersave");
+                var myGrid = $('#GridTable'),
+                selRowId = myGrid.jqGrid('getGridParam', 'selrow'),
+                celValue = myGrid.jqGrid('getCell', selRowId, 'GoodId');
+                $.ajax({
+                    url: "/Goods/DetailInfo",
+                    type: "GET",
+                    data: { id: celValue }
+                })
+                .done(function (partialViewResult) {
+                    $("#goodDetInfo").html(partialViewResult);
+                });
+            },
+            //on edit click event - save for future
+            //oneditfunc: ReloadAdd
+        },
     });
+
 });
+
 
 function onSuccess(result) {
     if (result.url) {
@@ -127,19 +185,9 @@ function onSuccess(result) {
     }
 }
 
-function ReloadAdd() {
-    var myGrid = $('#GridTable'),
-    selRowId = myGrid.jqGrid('getGridParam', 'selrow'),
-    celValue = myGrid.jqGrid('getCell', selRowId, 'GoodId');
-    $.ajax({
-        url: "/Operations/Add",
-        type: "GET",
-        data: { goodId: celValue }
-    })
-    .done(function (partialViewResult) {
-        $("#addOper").html(partialViewResult);
-    })
-}
+//function ReloadAdd() {
+//    alert("Reload");
+//}
 //checking that price is valid
 function figureValid(value, colname) {
     //1)is positive number
@@ -180,3 +228,5 @@ function notATag(value, colname) {
         return [false, "name cann't contain tags"];
     }
 }
+
+
