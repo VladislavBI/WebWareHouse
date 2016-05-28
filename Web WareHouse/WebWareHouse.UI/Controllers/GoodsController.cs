@@ -15,13 +15,13 @@ namespace Webwarehouse.UI.Controllers
     {
         GoodStatisticViewModel gStat;
         WarehouseContext context = new WarehouseContext();
-        IGoodsManager goodsMan;
+        EFGoodsManager goodsMan=new EFGoodsManager();
 
         public GoodsController()
         {}
         public GoodsController(IGoodsManager goodsMan)
         {
-            this.goodsMan = goodsMan;
+            //this.goodsMan = goodsMan;
         }
 
 
@@ -176,14 +176,22 @@ namespace Webwarehouse.UI.Controllers
         [HttpPost]
         public string Create([Bind(Exclude = "GoodId")] Good objGood)
         {
-            string msg;
+            string msg="";
             try
             {
                 if (ModelState.IsValid)
                 {
-                    context.Goods.Add(objGood);
-                    context.SaveChanges();
-                    msg = "Товар сохранен";
+                    if (!goodsMan.AlreadyHaveGood(objGood.GoodName))
+                    {
+                        context.Goods.Add(objGood);
+                        context.SaveChanges();
+                        msg = "Товар сохранен";
+                    }
+                    else
+                    {
+                        msg = "already have this good";
+                    }
+                   
                 }
                 else
                 {

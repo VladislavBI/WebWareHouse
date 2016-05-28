@@ -4,49 +4,50 @@
 <script src="~/Scripts/jquery.validate.min.js"></script>
 <script src="~/Scripts/jquery.validate.unobtrusive.min.js"></script>
 <script src="@Url.Content("~/Scripts/validations/OperationValidation.js")" type="text/javascript"></script>
-
-@if (Model.GoodAttached != null)
-{
-    using (Ajax.BeginForm("Add", new AjaxOptions { UpdateTargetId = "addOper" }))
+<div class="operationEditForm">
+    @if (Model.GoodAttached != null)
     {
-    @Html.AntiForgeryToken()
-    @Html.ValidationSummary(true)
+        using (Ajax.BeginForm("Add", new AjaxOptions { UpdateTargetId = "goodDetInfo", HttpMethod = "Post" }))
+        {
+            @Html.AntiForgeryToken()
+            @Html.ValidationSummary(true)
 
-    <fieldset>
-        <legend>Operation</legend>
-       
-        <div class="editor-label">
-           <label>Goods name: @Model.GoodAttached.GoodName</label>
-        </div>
-        
-        <div class="editor-label">
-            <label>Количество товара</label>
-        </div>
-        <div class="editor-field">
-            @Html.EditorFor(model => model.Quantity, new { @class = "goodNumber" })
-            @Html.ValidationMessageFor(model => model.Quantity)
-        </div>
+            <fieldset>
+                <legend>Operation</legend>
 
-        <div class="editor-label">
-            <label>Тип операции</label>
-        </div>
-        <div class="editor-field">
+                <div class="editor-label">
+                    <label>Goods name: @Model.GoodAttached.GoodName</label>
+                </div>
 
-            <select name="OperType">
-                @foreach (var i in (Enum.GetNames(typeof(Webwarehouse.Model.Entities.OperationType))))
-                {
-                    <option>@i</option>
-                }
-            </select>
+                <div class="editor-label">
+                    <label>Количество товара</label>
+                </div>
+                <div class="editor-field">
+                    @Html.EditorFor(model => model.Quantity, new { @class = "goodNumber" })
+                    @Html.ValidationMessageFor(model => model.Quantity)
+                </div>
 
-        </div>
+                <div class="editor-label">
+                    <label>Тип операции</label>
+                </div>
+                <div class="editor-field">
 
-        <p>
-            <input type="submit" value="Создать" />
-        </p>
-    </fieldset>
+                    <select name="OperType">
+                        @foreach (var i in (Enum.GetNames(typeof(Webwarehouse.Model.Entities.OperationType))))
+                        {
+                            <option>@i</option>
+                        }
+                    </select>
+
+                </div>
+
+                <p>
+                    <input type="submit" value="Создать" />
+                </p>
+            </fieldset>
+        }
     }
-}
+</div>
 
 @if (TempData["opMessage"] != null)
 {

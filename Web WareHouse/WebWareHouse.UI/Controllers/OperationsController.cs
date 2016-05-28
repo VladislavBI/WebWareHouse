@@ -5,13 +5,14 @@ using System.Web;
 using System.Web.Mvc;
 using Webwarehouse.Model.Concrete;
 using Webwarehouse.Model.Entities;
+using Webwarehouse.UI.Models;
 
 namespace Webwarehouse.UI.Controllers
 {
     public class OperationsController : Controller
     {
         WarehouseContext cont = new WarehouseContext();
-
+        
         public ActionResult Add(object idVal)
         {
             int id;
@@ -56,8 +57,8 @@ namespace Webwarehouse.UI.Controllers
                 }
 	        }
 
-
-             return PartialView(new Operation());
+            GoodStatisticViewModel gStat= new GoodStatisticViewModel(op.GoodId);
+            return PartialView("~/Views/Goods/DetailInfo.cshtml", gStat);
         }
 
         public ActionResult GetOperationsList(int goodId)
