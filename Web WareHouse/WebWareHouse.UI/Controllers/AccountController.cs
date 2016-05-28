@@ -18,8 +18,16 @@ namespace Webwarehouse.UI.Controllers
     [InitializeSimpleMembership]
     public class AccountController : Controller
     {
+        /// <summary>
+        /// database context
+        /// </summary>
         WarehouseContext context;
 
+        /// <summary>
+        /// Open login view
+        /// </summary>
+        /// <param name="returnUrl"></param>
+        /// <returns>Login view</returns>
         [AllowAnonymous]
         public ActionResult Login(string returnUrl)
         {
@@ -27,66 +35,82 @@ namespace Webwarehouse.UI.Controllers
             return View();
         }
 
-        //
-        // POST: /Account/Login
 
+        /// <summary>
+        /// Try to login to site
+        /// </summary>
+        /// <param name="model">user's login data</param>
+        /// <param name="returnUrl"></param>
+        /// <returns></returns>
         [HttpPost]
         [AllowAnonymous]
         [ValidateAntiForgeryToken]
         public ActionResult Login(LoginModel model, string returnUrl)
         {
+            //checking validity of user data
             if (ModelState.IsValid && WebSecurity.Login(model.UserName, model.Password, persistCookie: model.RememberMe))
             {
                 using (context = new WarehouseContext())
                 {
+                    //saving user id - for  transactions in goods
                     Session["UserId"] = context.UserProfiles.Where(x => x.UserName == model.UserName).Select(x => x.UserId).FirstOrDefault();
                 }
                 return RedirectToLocal(returnUrl);
             }
 
             // If we got this far, something failed, redisplay form
-            ModelState.AddModelError("", "Неправильный ввод имени или пароля.");
+            ModelState.AddModelError("", "Wrong user name or password");
             return View(model);
         }
 
-        //
-        // POST: /Account/LogOff
 
+
+        /// <summary>
+        /// Logoff fron site
+        /// </summary>
+        /// <returns>Login page</returns>
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult LogOff()
         {
             WebSecurity.Logout();
-
-            return RedirectToAction("Index", "Home");
+            return RedirectToAction("Login", "Account");
         }
 
-        //
-        // GET: /Account/Register
-
+        /// <summary>
+        /// Open registration view
+        /// </summary>
+        /// <returns>Register view</returns>
         [AllowAnonymous]
         public ActionResult Register()
         {
             return View();
         }
 
-        //
-        // POST: /Account/Register
-
+        /// <summary>
+        /// Try to login to site
+        /// </summary>
+        /// <param name="model">new user's registration data</param>
+        /// <param name="returnUrl"></param>
+        /// <returns></returns>
         [HttpPost]
         [AllowAnonymous]
         [ValidateAntiForgeryToken]
         public ActionResult Register(RegisterModel model)
         {
+            //checking user's data validity
             if (ModelState.IsValid)
             {
                 // Attempt to register the user
                 try
                 {
+                    //Creating of new account and loginig on site
                     WebSecurity.CreateUserAndAccount(model.UserName, model.Password);
                     WebSecurity.Login(model.UserName, model.Password);
+
                     using (context = new WarehouseContext())
                     {
+                        //Get users id - for  transactions in goods
                         Session["UserId"] = context.UserProfiles.Where(x => x.UserName == model.UserName).Select(x => x.UserId).FirstOrDefault();
                     }
                     return RedirectToAction("Index", "Home");

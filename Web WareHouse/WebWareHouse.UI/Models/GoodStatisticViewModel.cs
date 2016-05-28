@@ -6,7 +6,9 @@ using Webwarehouse.Model.Concrete;
 using Webwarehouse.Model.Entities;
 
 namespace Webwarehouse.UI.Models
-{
+{/// <summary>
+ /// View model for detail good info
+ /// </summary>
     public class GoodStatisticViewModel
     {
         WarehouseContext cont;

@@ -8,6 +8,12 @@
 
     @Styles.Render("~/Content/css")
     @Scripts.Render("~/bundles/modernizr")
+    @Scripts.Render("~/bundles/jquery")
+    <script src="~/Scripts/i18n/grid.locale-en.js"></script>
+    <script src="~/Scripts/jquery.jqGrid.min.js"></script>
+    <script src="@Url.Content("~/Scripts/jquery.unobtrusive-ajax.js")" type="text/javascript"></script>
+    <script src="~/Scripts/JQGridOperations.js"></script>
+
 </head>
 <body>
     <header>
@@ -30,7 +36,6 @@
         <section class="content-wrapper main-content clear-fix">
             @RenderBody()
         </section>
-    </div>
     <footer>
         <div class="content-wrapper">
             <div class="float-left">
@@ -39,7 +44,7 @@
         </div>
     </footer>
 
-    @*@Scripts.Render("~/bundles/jquery")*@
+   
     @RenderSection("scripts", required: false)
 </body>
 </html>

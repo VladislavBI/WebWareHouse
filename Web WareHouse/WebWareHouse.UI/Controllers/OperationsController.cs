@@ -67,14 +67,27 @@ namespace Webwarehouse.UI.Controllers
             return View();
         }
 
+        /// <summary>
+        /// Creating operating list for jqgrid, their insuing sorting
+        /// </summary>
+        /// <param name="sidx">Sorting row name</param>
+        /// <param name="sord">Asc or desc</param>
+        /// <param name="page">page number</param>
+        /// <param name="rows">number of rows on page</param>
+        /// <returns>data for jqgrid</returns>
         public JsonResult OperationsList(string sidx, string sord, int page, int rows)  //Gets the todo Lists.
         {
+            //getting jqgrid pages data
             int pageIndex = Convert.ToInt32(page) - 1;
             int pageSize = rows;
+            //current good
             int gId = Convert.ToInt32(Session["curGood"]);
+            //current user
             int uId = Convert.ToInt32(Session["UserId"]);
             string OperType = "";
-            var GoodsResults = cont.Operations.Where(x => x.GoodId == gId).Select(
+
+            //getting data for jqgrid from entity
+            var operationResults = cont.Operations.Where(x => x.GoodId == gId).Select(
                   a => new
                   {
                       a.OperationId,
@@ -84,24 +97,90 @@ namespace Webwarehouse.UI.Controllers
                       a.OperationTime
                   });
 
-            int totalRecords = GoodsResults.Count();
+            //get total pages and rows quantity
+            int totalRecords = operationResults.Count();
             var totalPages = (int)Math.Ceiling((float)totalRecords / (float)rows);
+
+
+            //choose parameter to sort, sorting
+            switch (sidx)
+            {
+                case "UserName":
+                    //descending sort
+                    if (sord.ToUpper() == "DESC")
+                    {
+                        //ordering
+                        operationResults = operationResults.OrderByDescending(s => s.UserName);
+                        //getting rows for current page
+                        operationResults = operationResults.Skip(pageIndex * pageSize).Take(pageSize);
+                    }
+                    //ascending sort
+                    else
+                    {
+                        operationResults = operationResults.OrderBy(s => s.UserName);
+                        operationResults = operationResults.Skip(pageIndex * pageSize).Take(pageSize);
+                    }
+                    break;
+
+                case "Quantity":
+
+                    if (sord.ToUpper() == "DESC")
+                    {
+                        operationResults = operationResults.OrderByDescending(s => s.Quantity);
+                        operationResults = operationResults.Skip(pageIndex * pageSize).Take(pageSize);
+                    }
+                    else
+                    {
+                        operationResults = operationResults.OrderBy(s => s.Quantity);
+                        operationResults = operationResults.Skip(pageIndex * pageSize).Take(pageSize);
+                    }
+                    break;
+
+                    case "OperType":
+                    if (sord.ToUpper() == "DESC")
+                    {   
+                        operationResults = operationResults.OrderByDescending(s => s.OperType);
+                        operationResults = operationResults.Skip(pageIndex * pageSize).Take(pageSize);
+                    }
+                    else
+                    {
+                        operationResults = operationResults.OrderBy(s => s.OperType);
+                        operationResults = operationResults.Skip(pageIndex * pageSize).Take(pageSize);
+                    }
+                    break;
+
+                default:
+                    if (sord.ToUpper() == "DESC")
+                    {
+                        operationResults = operationResults.OrderByDescending(s => s.OperationTime);
+                        operationResults = operationResults.Skip(pageIndex * pageSize).Take(pageSize);
+                    }
+                    else
+                    {
+                        operationResults = operationResults.OrderBy(s => s.OperationTime);
+                        operationResults = operationResults.Skip(pageIndex * pageSize).Take(pageSize);
+                    }
+                    break;
+            }
+
+
             if (sord.ToUpper() == "DESC")
             {
-                GoodsResults = GoodsResults.OrderByDescending(s => s.OperationTime);
-                GoodsResults = GoodsResults.Skip(pageIndex * pageSize).Take(pageSize);
+                operationResults = operationResults.OrderByDescending(s => s.OperationTime);
+                operationResults = operationResults.Skip(pageIndex * pageSize).Take(pageSize);
             }
             else
             {
-                GoodsResults = GoodsResults.OrderBy(s => s.OperationTime);
-                GoodsResults = GoodsResults.Skip(pageIndex * pageSize).Take(pageSize);
+                operationResults = operationResults.OrderBy(s => s.OperationTime);
+                operationResults = operationResults.Skip(pageIndex * pageSize).Take(pageSize);
             }
+
             var jsonData = new
             {
                 total = totalPages,
                 page,
                 records = totalRecords,
-                rows = GoodsResults
+                rows = operationResults
             };
             return Json(jsonData, JsonRequestBehavior.AllowGet);
         }

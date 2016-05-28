@@ -1,4 +1,6 @@
-﻿function numFormat(cellvalue, options, rowObject) {
+﻿
+
+function numFormat(cellvalue, options, rowObject) {
     var e = String(cellvalue);
     return e.replace(".", ",");
 }
@@ -38,6 +40,10 @@ $(function () {
         viewrecords: true,
         caption: 'Список товаров',
         sortable: true,
+        onSortCol: function (index, columnIndex, sortOrder) {
+            var postpage = jQuery("#GridTable").getGridParam('postData');
+            jQuery("#GridTable").setGridParam({ page: postpage.page });
+        },
         emptyrecords: 'No records to display',
         cellsubmit : 'remote',
         jsonReader: {
@@ -66,6 +72,7 @@ $(function () {
                 .done(function (partialViewResult) {
                     $("#goodDetInfo").html(partialViewResult);
                 });
+                $(".operationEditForm").empty();
             },
         gridComplete:
             function () {
@@ -79,7 +86,11 @@ $(function () {
                 })
                 .done(function (partialViewResult) {
                     $("#goodDetInfo").html(partialViewResult);
+                    $(".operationEditForm").empty();
                 });
+                //to save current page on sorting
+                var postpage = jQuery("#GridTable").getGridParam('postData');
+                jQuery("#GridTable").setGridParam({ page: postpage.page });
             },
         //to change good's full view after row deleting
         loadComplete: function(data){
@@ -93,6 +104,7 @@ $(function () {
             })
             .done(function (partialViewResult) {
                 $("#goodDetInfo").html(partialViewResult);
+                $(".operationEditForm").empty();
             });
         },
 
@@ -172,6 +184,7 @@ $(function () {
                 .done(function (partialViewResult) {
                     $("#goodDetInfo").html(partialViewResult);
                 });
+                $(".operationEditForm").empty();
             },
             //on edit click event - save for future
             //oneditfunc: ReloadAdd
