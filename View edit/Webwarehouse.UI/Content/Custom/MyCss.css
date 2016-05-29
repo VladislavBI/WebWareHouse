@@ -1,0 +1,77 @@
+﻿.HorAlCenter {
+    margin: auto;
+    width: 60%;
+    border: 3px solid #73AD21;
+    padding: 10px;
+}
+.table {
+    display:table
+}
+.tr {
+    display:table-row
+}
+.td {
+    display:table-cell
+}
+.tableF{
+    display:table;
+    width:100%;   
+}
+.bidyToMiddle{
+	display		: table-cell;
+	vertical-align	: middle;
+}
+
+
+#body-no-width {
+    clear: both;
+    padding-bottom: 35px;
+  
+}
+
+#jqgridtd{
+    width:90%;
+}
+#site-footer{
+    
+    background-color: #7ac0da;
+        background-image: -ms-linear-gradient(left, #7ac0da 0%, #a4d4e6 100%);
+        background-image: -o-linear-gradient(left, #7ac0da 0%, #a4d4e6 100%);
+        background-image: -webkit-gradient(linear, left top, right top, color-stop(0, #7ac0da), color-stop(1, #a4d4e6));
+        background-image: -webkit-linear-gradient(left, #7ac0da 0%, #a4d4e6 100%);
+        background-image: linear-gradient(left, #7ac0da 0%, #a4d4e6 100%);
+
+background:none repeat scroll 0 0 #f0f0f0;
+min-height:60px;
+padding:10px;
+margin-top:50px;
+}
+
+.goodDetInfo{
+    width: 85%;
+    text-align: right;
+}
+
+.my-select{
+    width: 82%;
+    height: 30px;
+}
+
+.goodNumber{
+    width: 58%;
+}
+
+.my-header{
+    font-size: 1.8em;
+    margin: 18px;
+}
+
+.static-window{
+        margin-top: 50px;
+}
+
+.fotter-content{
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+}
