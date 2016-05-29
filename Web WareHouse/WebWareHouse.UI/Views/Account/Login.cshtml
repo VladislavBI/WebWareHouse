@@ -1,7 +1,7 @@
 ﻿@model Webwarehouse.Model.Entities.LoginModel
 
 @{
-    ViewBag.Title = "Вход";
+    ViewBag.Title = "Login";
     Layout = "~/Views/Shared/_LayoutLogin.cshtml";
 }
 
@@ -9,8 +9,8 @@
     <h1>@ViewBag.Title</h1>
 </hgroup>
 
-<section id="loginForm">
-<h2>Введите свой логин для подключения</h2>
+<section >
+<h2>Login for connection</h2>
 @using (Html.BeginForm("Login", "Account",
                 new { ReturnUrl = ViewBag.ReturnUrl }, 
                 FormMethod.Post, new { id = "signupform" })) {
@@ -21,25 +21,25 @@
         <legend>Log in Form</legend>
         <ol>
             <li>
-                <label>Имя пользователя</label>
+                <label>User name</label>
                 @Html.TextBoxFor(m => m.UserName, new { @class="center"})
                 @Html.ValidationMessageFor(m => m.UserName)
 
             </li>
             <li>
-                <label>Пароль</label>
+                <label>Password</label>
                 @Html.PasswordFor(m => m.Password)
                 @Html.ValidationMessageFor(m => m.Password)
             </li>
             <li>
                 @Html.CheckBoxFor(m => m.RememberMe)
-                @Html.Label("Запомнить?", new { @class = "checkbox" })
+                @Html.Label("Remember me?", new { @class = "checkbox" })
             </li>
         </ol>
         <input type="submit" value="Вход" />
     </fieldset>
     <p>
-        @Html.ActionLink("Зарегистрируйтесь", "Register"), если у Вас нет аккаунта.
+        @Html.ActionLink("Register", "Register"), if you don't have account yet.
     </p>
 }
 </section>

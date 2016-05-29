@@ -1,14 +1,22 @@
-﻿$(":submit").on("click", function (event) {
+﻿$("#operationCreateSubmit").on("click", function (event) {
 
 
     //cleaning previous errors
     $(".qtyerror").remove();
 
-    //checking all textboxes by dif rulles
+    //checking all textboxes by different rules
     //if no errors exec next
     //else - prevent button click
-    notFloat();
 
+    //check that input is filed
+    request();
+
+    //check for characters or punctuation
+    if (noErrors()) {
+        notString();
+    }
+    
+    //check for зщішешму тгьиук
     if (noErrors()) {
         isPositive();
     }
@@ -16,29 +24,35 @@
     if (!noErrors()) {
         event.preventDefault();
     }
-
-    $(".operationEditForm").hide();
-   // $(".goodDetInfo").remove();
+    else {
+        addingSuccesseful();
+    }
 });
 
-//not a dloat number
-function notFloat() {
-    
+//input is filled
+function request() {
    
 
-        if ($("#Quantity").val().search(/\.+/) == "" ) {
-            $("#Quantity").after('<span class="qtyerror">Must be filled</span>').css("borderColor", "red");
+    if (($("#Quantity").val() == "")) {
+            $(this).after('<span class="txterror">Must be filled</span>').css("borderColor", "red");
         }
-        if ($("#Quantity").val().search(/,+/) == "") {
-            $("#Quantity").after('<span class="qtyerror">Heyo</span>').css("borderColor", "red");
-
-        }
-
         else {
             $(this).css("border", "none");
         }
-  
 }
+//check that number doesn't contain characters
+function notString() {
+    var pattern = /[^0-9]/
+
+    if (pattern.test($("#Quantity").val())) {
+        $("#Quantity").after('<span class="qtyerror">Must be interer number</span>').css("borderColor", "red");
+    }
+    else {
+        $(this).css("border", "none");
+    }
+}
+
+//check that figure is positive
 function isPositive() {
     if ($("#Quantity").val() <= 0) {
         $("#Quantity").after('<span class="qtyerror">Value must be more than 0</span>').css("borderColor", "red");
@@ -47,6 +61,8 @@ function isPositive() {
         $(this).css("border", "none");
     }
 }
+
+//checking that it isn't any errors in code
 function noErrors() {
     if ($("form").find(".qtyerror").val() == null) {
         return true;
@@ -55,4 +71,12 @@ function noErrors() {
         return false;
     }
 
+}
+
+//successufuly added
+function addingSuccesseful() {
+    alert("Operation successfully saved");
+    //hiding adding operation
+    $(".operationEditForm").hide();
+    // $(".goodDetInfo").remove();
 }

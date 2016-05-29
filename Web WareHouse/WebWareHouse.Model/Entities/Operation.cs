@@ -23,6 +23,7 @@ namespace Webwarehouse.Model.Entities
         public int GoodId { get; set; }
 
         [Required]
+        [RegularExpression("([0-9]+)", ErrorMessage ="Must be integer")]
         [Range(typeof(int), "1", "10000", ErrorMessage = "количество должно быть от 1 до 10000")]
         public int Quantity { get; set; }
 

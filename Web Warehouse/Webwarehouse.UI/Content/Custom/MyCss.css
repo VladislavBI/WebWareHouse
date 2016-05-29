@@ -4,3 +4,20 @@
     border: 3px solid #73AD21;
     padding: 10px;
 }
+.table {
+    display:table
+}
+.tr {
+    display:table-row
+}
+.td {
+    display:table-cell
+}
+.tableF{
+    display:table;
+    width:90%;   
+}
+.bidyToMiddle{
+	display		: table-cell;
+	vertical-align	: middle;
+}
