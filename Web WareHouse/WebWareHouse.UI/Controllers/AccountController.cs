@@ -1,16 +1,13 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Transactions;
-using System.Web;
 using System.Web.Mvc;
 using System.Web.Security;
-using DotNetOpenAuth.AspNet;
 using Microsoft.Web.WebPages.OAuth;
 using WebMatrix.WebData;
 using Webwarehouse.UI.Filters;
-using Webwarehouse.Model.Entities;
-using Webwarehouse.Model.Concrete;
+using Webwarehouse.UI.Models.Concrete;
+using Webwarehouse.UI.Models.Entities;
 
 namespace Webwarehouse.UI.Controllers
 {
@@ -19,12 +16,12 @@ namespace Webwarehouse.UI.Controllers
     public class AccountController : Controller
     {
         /// <summary>
-        /// database context
+        /// Database context.
         /// </summary>
-        WarehouseContext context;
+        private WarehouseContext _context;
 
         /// <summary>
-        /// Open login view
+        /// Open login view.
         /// </summary>
         /// <param name="returnUrl"></param>
         /// <returns>Login view</returns>
@@ -35,25 +32,27 @@ namespace Webwarehouse.UI.Controllers
             return View();
         }
 
-
         /// <summary>
-        /// Try to login to site
+        ///  Try to login to site.
         /// </summary>
-        /// <param name="model">user's login data</param>
+        /// <param name="model">User's login data</param>
         /// <param name="returnUrl"></param>
-        /// <returns></returns>
+        /// <returns>Main window of the programm</returns>
         [HttpPost]
         [AllowAnonymous]
         [ValidateAntiForgeryToken]
         public ActionResult Login(LoginModel model, string returnUrl)
         {
             //checking validity of user data
-            if (ModelState.IsValid && WebSecurity.Login(model.UserName, model.Password, persistCookie: model.RememberMe))
+            if (ModelState.IsValid && WebSecurity.Login(model.UserName, model.Password, model.RememberMe))
             {
-                using (context = new WarehouseContext())
+                using (_context = new WarehouseContext())
                 {
                     //saving user id - for  transactions in goods
-                    Session["UserId"] = context.UserProfiles.Where(x => x.UserName == model.UserName).Select(x => x.UserId).FirstOrDefault();
+                    Session["UserId"] =
+                        _context.UserProfiles.Where(x => x.UserName == model.UserName)
+                            .Select(x => x.UserId)
+                            .FirstOrDefault();
                 }
                 return RedirectToLocal(returnUrl);
             }
@@ -63,10 +62,8 @@ namespace Webwarehouse.UI.Controllers
             return View(model);
         }
 
-
-
         /// <summary>
-        /// Logoff fron site
+        /// Logoff fron site.
         /// </summary>
         /// <returns>Login page</returns>
         [HttpPost]
@@ -78,7 +75,7 @@ namespace Webwarehouse.UI.Controllers
         }
 
         /// <summary>
-        /// Open registration view
+        /// Open registration view.
         /// </summary>
         /// <returns>Register view</returns>
         [AllowAnonymous]
@@ -88,11 +85,12 @@ namespace Webwarehouse.UI.Controllers
         }
 
         /// <summary>
-        /// Try to login to site
+        /// Trying to register new user 
+        /// and to login to site.
         /// </summary>
-        /// <param name="model">new user's registration data</param>
-        /// <param name="returnUrl"></param>
-        /// <returns></returns>
+        /// <param name="model">New user's registration data</param>
+        /// <returns>Main window - succeess
+        /// Registration window with error message- fail</returns>
         [HttpPost]
         [AllowAnonymous]
         [ValidateAntiForgeryToken]
@@ -108,10 +106,13 @@ namespace Webwarehouse.UI.Controllers
                     WebSecurity.CreateUserAndAccount(model.UserName, model.Password);
                     WebSecurity.Login(model.UserName, model.Password);
 
-                    using (context = new WarehouseContext())
+                    using (_context = new WarehouseContext())
                     {
                         //Get users id - for  transactions in goods
-                        Session["UserId"] = context.UserProfiles.Where(x => x.UserName == model.UserName).Select(x => x.UserId).FirstOrDefault();
+                        Session["UserId"] =
+                            _context.UserProfiles.Where(x => x.UserName == model.UserName)
+                                .Select(x => x.UserId)
+                                .FirstOrDefault();
                     }
                     return RedirectToAction("Index", "Home");
                 }
@@ -125,140 +126,25 @@ namespace Webwarehouse.UI.Controllers
             return View(model);
         }
 
-        //
-        // POST: /Account/Disassociate
-
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Disassociate(string provider, string providerUserId)
-        {
-            string ownerAccount = OAuthWebSecurity.GetUserName(provider, providerUserId);
-            ManageMessageId? message = null;
-
-            // Only disassociate the account if the currently logged in user is the owner
-            if (ownerAccount == User.Identity.Name)
-            {
-                // Use a transaction to prevent the user from deleting their last login credential
-                using (var scope = new TransactionScope(TransactionScopeOption.Required, new TransactionOptions { IsolationLevel = IsolationLevel.Serializable }))
-                {
-                    bool hasLocalAccount = OAuthWebSecurity.HasLocalAccount(WebSecurity.GetUserId(User.Identity.Name));
-                    if (hasLocalAccount || OAuthWebSecurity.GetAccountsFromUserName(User.Identity.Name).Count > 1)
-                    {
-                        OAuthWebSecurity.DeleteAccount(provider, providerUserId);
-                        scope.Complete();
-                        message = ManageMessageId.RemoveLoginSuccess;
-                    }
-                }
-            }
-
-            return RedirectToAction("Manage", new { Message = message });
-        }
-
-        //
-        // GET: /Account/Manage
-
-        public ActionResult Manage(ManageMessageId? message)
-        {
-            ViewBag.StatusMessage =
-                message == ManageMessageId.ChangePasswordSuccess ? "Your password has been changed."
-                : message == ManageMessageId.SetPasswordSuccess ? "Your password has been set."
-                : message == ManageMessageId.RemoveLoginSuccess ? "The external login was removed."
-                : "";
-            ViewBag.HasLocalPassword = OAuthWebSecurity.HasLocalAccount(WebSecurity.GetUserId(User.Identity.Name));
-            ViewBag.ReturnUrl = Url.Action("Manage");
-            return View();
-        }
-
-        //
-        // POST: /Account/Manage
-
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Manage(LocalPasswordModel model)
-        {
-            bool hasLocalAccount = OAuthWebSecurity.HasLocalAccount(WebSecurity.GetUserId(User.Identity.Name));
-            ViewBag.HasLocalPassword = hasLocalAccount;
-            ViewBag.ReturnUrl = Url.Action("Manage");
-            if (hasLocalAccount)
-            {
-                if (ModelState.IsValid)
-                {
-                    // ChangePassword will throw an exception rather than return false in certain failure scenarios.
-                    bool changePasswordSucceeded;
-                    try
-                    {
-                        changePasswordSucceeded = WebSecurity.ChangePassword(User.Identity.Name, model.OldPassword, model.NewPassword);
-                    }
-                    catch (Exception)
-                    {
-                        changePasswordSucceeded = false;
-                    }
-
-                    if (changePasswordSucceeded)
-                    {
-                        return RedirectToAction("Manage", new { Message = ManageMessageId.ChangePasswordSuccess });
-                    }
-                    else
-                    {
-                        ModelState.AddModelError("", "The current password is incorrect or the new password is invalid.");
-                    }
-                }
-            }
-            else
-            {
-                // User does not have a local password so remove any validation errors caused by a missing
-                // OldPassword field
-                ModelState state = ModelState["OldPassword"];
-                if (state != null)
-                {
-                    state.Errors.Clear();
-                }
-
-                if (ModelState.IsValid)
-                {
-                    try
-                    {
-                        WebSecurity.CreateAccount(User.Identity.Name, model.NewPassword);
-                        return RedirectToAction("Manage", new { Message = ManageMessageId.SetPasswordSuccess });
-                    }
-                    catch (Exception)
-                    {
-                        ModelState.AddModelError("", String.Format("Unable to create local account. An account with the name \"{0}\" may already exist.", User.Identity.Name));
-                    }
-                }
-            }
-
-            // If we got this far, something failed, redisplay form
-            return View(model);
-        }
-
-        //
-        // POST: /Account/ExternalLogin
-
-
-      
 
         #region Helpers
+
         private ActionResult RedirectToLocal(string returnUrl)
         {
             if (Url.IsLocalUrl(returnUrl))
             {
                 return Redirect(returnUrl);
             }
-            else
-            {
-                return RedirectToAction("Index", "Home");
-            }
+            return RedirectToAction("Index", "Home");
         }
 
         public enum ManageMessageId
         {
             ChangePasswordSuccess,
             SetPasswordSuccess,
-            RemoveLoginSuccess,
+            RemoveLoginSuccess
         }
 
-        
 
         private static string ErrorCodeToString(MembershipCreateStatus createStatus)
         {
@@ -270,7 +156,8 @@ namespace Webwarehouse.UI.Controllers
                     return "User name already exists. Please enter a different user name.";
 
                 case MembershipCreateStatus.DuplicateEmail:
-                    return "A user name for that e-mail address already exists. Please enter a different e-mail address.";
+                    return
+                        "A user name for that e-mail address already exists. Please enter a different e-mail address.";
 
                 case MembershipCreateStatus.InvalidPassword:
                     return "The password provided is invalid. Please enter a valid password value.";
@@ -288,15 +175,19 @@ namespace Webwarehouse.UI.Controllers
                     return "The user name provided is invalid. Please check the value and try again.";
 
                 case MembershipCreateStatus.ProviderError:
-                    return "The authentication provider returned an error. Please verify your entry and try again. If the problem persists, please contact your system administrator.";
+                    return
+                        "The authentication provider returned an error. Please verify your entry and try again. If the problem persists, please contact your system administrator.";
 
                 case MembershipCreateStatus.UserRejected:
-                    return "The user creation request has been canceled. Please verify your entry and try again. If the problem persists, please contact your system administrator.";
+                    return
+                        "The user creation request has been canceled. Please verify your entry and try again. If the problem persists, please contact your system administrator.";
 
                 default:
-                    return "An unknown error occurred. Please verify your entry and try again. If the problem persists, please contact your system administrator.";
+                    return
+                        "An unknown error occurred. Please verify your entry and try again. If the problem persists, please contact your system administrator.";
             }
         }
+
         #endregion
     }
 }

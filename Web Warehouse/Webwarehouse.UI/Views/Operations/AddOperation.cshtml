@@ -1,0 +1,54 @@
+﻿@using Webwarehouse.UI.Models.Entities
+@model Operation
+
+
+<div class="operationEditForm">
+    @if (Model.GoodAttached != null)
+    {
+        using (Ajax.BeginForm("AddOperation", new AjaxOptions {UpdateTargetId = "good-det-inf", HttpMethod = "Post"}))
+        {
+            @Html.AntiForgeryToken()
+            @Html.ValidationSummary(true)
+            @Html.Hidden("IdValue", @Model.GoodAttached.GoodId)
+            <fieldset>
+                <legend>Operation</legend>
+                <center>
+                    <div class="editor-label header-create">
+                        <label>@Model.GoodAttached.GoodName</label>
+
+                    </div>
+
+                    <div class="editor-label">
+                        <label>Operation value</label>
+                    </div>
+                    <div class="editor-field">
+                        @Html.EditorFor(model => model.Quantity, new {@class = "goodNumber"})
+                        @*commented because jquery validation has more functions*@
+                        @*@Html.ValidationMessageFor(model => model.Quantity)*@
+                    </div>
+                    <div id="validation-info-anchor"></div>
+                    <div class="editor-label">
+                        <label>Opeartion type</label>
+                    </div>
+                    <div class="editor-field">
+
+                        <select name="OperType" class="my-select">
+                            @foreach (var i in (Enum.GetNames(typeof (OperationType))))
+                            {
+                                <option>@i</option>
+                            }
+                        </select>
+
+                    </div>
+
+                    <p>
+                        <input type="submit" value="Create" id="operationCreateSubmit"/>
+                    </p>
+                </center>
+            </fieldset>
+        }
+    }
+</div>
+<script src="~/Scripts/jquery.validate.min.js"></script>
+<script src="~/Scripts/jquery.validate.unobtrusive.min.js"></script>
+<script src="@Url.Content("~/Scripts/validations/OperationValidation.js")" type="text/javascript"></script>

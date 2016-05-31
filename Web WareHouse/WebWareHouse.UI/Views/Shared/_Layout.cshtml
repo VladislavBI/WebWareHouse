@@ -1,70 +1,72 @@
 ﻿<!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="utf-8" />
+    <meta charset="utf-8"/>
     <title>@ViewBag.Title - My ASP.NET MVC Application</title>
-    <link href="~/favicon.ico" rel="shortcut icon" type="image/x-icon" />
-    <meta name="viewport" content="width=device-width" />
-    <link href="~/Content/Custom/MyCss.css" rel="stylesheet" type="text/css" />
+    <link href="~/favicon.ico" rel="shortcut icon" type="image/x-icon"/>
+    <meta name="viewport" content="width=device-width"/>
+    <link href="~/Content/Custom/MyCss.css" rel="stylesheet" type="text/css"/>
     @Styles.Render("~/Content/css")
     @Scripts.Render("~/bundles/modernizr")
     @Scripts.Render("~/bundles/jquery")
 
-
-
+    <script src="~/Scripts/jquery.validate.min.js"></script>
+    <script src="~/Scripts/jquery.validate.unobtrusive.min.js"></script>
+    <script src="@Url.Content("~/Scripts/validations/OperationValidation.js")" type="text/javascript"></script>
 
 
 </head>
 <body>
-    <header>
-        <div class="content-wrapper">
-            <div class="float-left">
-                <p class="site-title">@Html.ActionLink("your logo here", "Index", "Home")</p>
-            </div>
-            <div class="float-right">
-                <section id="login">
-                    @Html.Partial("_LoginPartial")
-                </section>
-                <nav>
-                    <ul id="menu">  
-                        <li>@Html.ActionLink("Главная страница", "Index", "Home")</li>
-                    </ul>
-                </nav>
-            </div>
+<header>
+    <div class="content-wrapper">
+        <div class="float-left">
+            <p class="site-title">@Html.ActionLink("your logo here", "Index", "Home")</p>
         </div>
-    </header>
-    <div id ="body">
-        @RenderSection("featured", required: false)
-        <section class="content-wrapper main-content clear-fix">
-            @RenderBody()
-        </section>
+        <div class="float-right">
+            <section id="login">
+                @Html.Partial("_LoginPartial")
+            </section>
+            <nav>
+                <ul id="menu">
+                    <li>@Html.ActionLink("Главная страница", "Index", "Home")</li>
+                </ul>
+            </nav>
+        </div>
     </div>
-    <div id="body">
-        <div class="tableF">
-            <div class="tr">
-                  <div class="td" style="width: 380px">
-                      @{Html.RenderAction("DetailInfo", "Goods");}
+</header>
+<div id="body-no-width">
+    @RenderSection("featured", false)
+    <section class="content-wrapper main-content clear-fix">
+        @RenderBody()
+    </section>
+</div>
+<div id="body">
+    <div class="tableF">
+        <div class="tr">
 
-                      <div id="addOper">
+            <div class="td">
 
-                      </div>
-                  </div>
-                <div class="td">
-                  
-                    @{Html.RenderAction("GoodListShow", "Goods");}
+                @{ Html.RenderAction("GoodsListShow", "Goods"); }
+            </div>
+            <div class="td" style="width: 380px">
+                @{ Html.RenderAction("DetailInfo", "Goods"); }
+
+                <div id="addOper">
+
                 </div>
             </div>
         </div>
     </div>
-    <footer>
-        <div class="content-wrapper">
-            <div class="float-left">
-                <p>&copy; @DateTime.Now.Year - Web Warehouse</p>
-            </div>
+</div>
+<footer id="site-footer">
+    <div class="content-wrapper">
+        <div >
+            <p>&copy; @DateTime.Now.Year - Web Warehouse</p>
         </div>
-    </footer>
+    </div>
+</footer>
 
 
-    @RenderSection("scripts", required: false)
+@RenderSection("scripts", false)
 </body>
 </html>

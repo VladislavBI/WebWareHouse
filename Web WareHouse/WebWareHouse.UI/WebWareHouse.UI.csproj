@@ -199,8 +199,19 @@
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Infrastructure\DBWarehouseInitializer.cs" />
+    <Compile Include="Migrations\201605210736312_MigrateDB.cs" />
+    <Compile Include="Migrations\201605210736312_MigrateDB.Designer.cs">
+      <DependentUpon>201605210736312_MigrateDB.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Infrastructure\NinjectControllerFactory.cs" />
-    <Compile Include="Models\GoodStatisticViewModel.cs" />
+    <Compile Include="Models\Abstract\IGoodsManager.cs" />
+    <Compile Include="Models\Concrete\EFGoodsManager.cs" />
+    <Compile Include="Models\Concrete\WarehouseContext.cs" />
+    <Compile Include="Models\Entities\AccountModels.cs" />
+    <Compile Include="Models\Entities\Good.cs" />
+    <Compile Include="Models\Entities\Operation.cs" />
+    <Compile Include="Models\ViewModels\GoodStatisticViewModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -341,6 +352,7 @@
     <Content Include="Scripts\knockout-2.2.0.debug.js" />
     <Content Include="Scripts\knockout-2.2.0.js" />
     <Content Include="Scripts\modernizr-2.6.2.js" />
+    <Content Include="Scripts\Others\Service.js" />
     <Content Include="Scripts\validations\LoginValidation.js" />
     <Content Include="Scripts\validations\OperationValidation.js" />
     <Content Include="Web.config" />
@@ -367,7 +379,6 @@
     <Content Include="Images\orderedList9.png" />
     <Content Include="Views\_ViewStart.cshtml" />
     <Content Include="Views\Account\Login.cshtml" />
-    <Content Include="Views\Account\Manage.cshtml" />
     <Content Include="Views\Account\Register.cshtml" />
     <Content Include="Views\Home\Index.cshtml" />
     <Content Include="Views\Shared\Error.cshtml" />
@@ -378,9 +389,9 @@
     <Content Include="Views\Shared\_LayoutStatistic.cshtml" />
     <Content Include="Views\Goods\AddGood.cshtml" />
     <Content Include="Views\Goods\DetailInfo.cshtml" />
-    <Content Include="Views\Goods\GoodListShow.cshtml" />
+    <Content Include="Views\Goods\GoodsListShow.cshtml" />
     <Content Include="Views\Operations\GetOperationsList.cshtml" />
-    <Content Include="Views\Operations\Add.cshtml" />
+    <Content Include="Views\Operations\AddOperation.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
@@ -389,10 +400,9 @@
     <Content Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Webwarehouse.Model\Webwarehouse.Model.csproj">
-      <Project>{c5bc0c82-ef5d-4cd7-8246-c8aefd18c3b3}</Project>
-      <Name>Webwarehouse.Model</Name>
-    </ProjectReference>
+    <EmbeddedResource Include="Migrations\201605210736312_MigrateDB.resx">
+      <DependentUpon>201605210736312_MigrateDB.cs</DependentUpon>
+    </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

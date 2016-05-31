@@ -7831,7 +7831,7 @@ var xmlJsonClass = {
 						url: k.url,
 						data: a.isFunction(l.p.serializeRowData) ? l.p.serializeRowData.call(l, v) : v,
 						type: k.mtype,
-						async: false,
+						async: true,
 						complete: function (A, B) {
 							a("#lui_" + l.p.id).hide();
 							if (B === "success") {

@@ -1,51 +1,72 @@
-﻿
+﻿//resize jqgrid for fitting current window size
+$(window).resize(function () {
+    var dataGrid = $("#GridTable");
+    //sets the grid size initially
+    dataGrid.jqGrid("setGridWidth", parseInt($("#jqgrid-td").width()));
+    //$(body).height(parseInt($(window).height()));
+});
 
+//initial float cells format - comma instead of dot 
 function numFormat(cellvalue, options, rowObject) {
     var e = String(cellvalue);
     return e.replace(".", ",");
-}
-
-function numUnformat(cellvalue, options, rowObject) {
-    var e = String(cellvalue);
-    return e.replace(".", ",");
+    
 }
 
 
-$(function () {
+$(function() {
     $("#GridTable").jqGrid({
         url: "/Goods/GoodsList",
         editurl: "/Goods/Edit",
-        datatype: 'json',
-        mtype: 'Get',
-        colNames: ['GoodId', 'Имя', 'Цена'],
+        datatype: "json",
+        mtype: "Get",
+        colNames: ["GoodId", "Имя", "Цена"],
         colModel: [
-            { key: true, hidden: true, name: 'GoodId', index: 'GoodId', editable: true },
+            //column for good's ids
+            { key: true, hidden: true, name: "GoodId", index: "GoodId", editable: true },
             {
-                key: false, name: 'GoodName', index: 'GoodName', editable: true, sortable: true,
+                key: false,
+                name: "GoodName",
+                index: "GoodName",
+                editable: true,
+                sortable: true,
                 editrules: {
-                    required: true, custom: true, custom_func: notATag
+                    required: true,
+                    custom: true,
+                    custom_func: notATag
                 }
             },
-            
+            //column for good's prices
             {
-                key: false, name: 'Price', index: 'Price', editable: true, sortable: true, formatter: numFormat,
-                unformat: numUnformat,
-                //sorttype: 'float',
-                editrules: { required: true, custom: true, custom_func: figureValid}
-            }, ],
-        pager: jQuery('#pager'),
+                key: false,
+                name: "Price",
+                index: "Price",
+                editable: true,
+                sortable: true,
+                formatter: numFormat,
+                editrules: { required: true, custom: true, custom_func: figureValid }
+            }
+        ],
+        
+        pager: jQuery("#pager"),
         rowNum: 10,
+        //rows on page variants
         rowList: [10, 25, 50, 100],
-        height: '100%',
+        height: "100%",
         viewrecords: true,
-        caption: 'Список товаров',
+        caption: "Goods list",
         sortable: true,
-        onSortCol: function (index, columnIndex, sortOrder) {
-            var postpage = jQuery("#GridTable").getGridParam('postData');
+
+        //to save current page on sorting
+        onSortCol: function(index, columnIndex, sortOrder) {
+            var postpage = jQuery("#GridTable").getGridParam("postData");
             jQuery("#GridTable").setGridParam({ page: postpage.page });
         },
-        emptyrecords: 'No records to display',
-        cellsubmit : 'remote',
+
+        emptyrecords: "No records to display",
+        cellsubmit: "remote",
+
+        //information from server
         jsonReader: {
             root: "rows",
             page: "page",
@@ -56,114 +77,113 @@ $(function () {
         },
         autowidth: true,
         multiselect: false,
-        
-        //to get good's full view when row is selected
-        onSelectRow:
 
-            function () {
-                var myGrid = $('#GridTable'),
-                selRowId = myGrid.jqGrid('getGridParam', 'selrow'),
-                celValue = myGrid.jqGrid('getCell', selRowId, 'GoodId');
+        //to get good's detailed info view when row is selected
+        onSelectRow:
+            function() {
+                var myGrid = $("#GridTable"),
+                    selRowId = myGrid.jqGrid("getGridParam", "selrow"),
+                    celValue = myGrid.jqGrid("getCell", selRowId, "GoodId");
+
                 $.ajax({
-                    url: "/Goods/DetailInfo",
-                    type: "GET",
-                    data: { id: celValue }
-                })
-                .done(function (partialViewResult) {
-                    $("#goodDetInfo").html(partialViewResult);
-                });
+                        url: "/Goods/DetailInfo",
+                        type: "GET",
+                        data: { id: celValue }
+                    })
+                    .done(function(partialViewResult) {
+                        $("#good-det-inf").html(partialViewResult);
+                    });
+
+                //clearing operationAdd View for previous good
                 $(".operationEditForm").empty();
             },
         gridComplete:
-            function () {
-                var myGrid = $('#GridTable'),
-                selRowId = myGrid.jqGrid('getGridParam', 'selrow'),
-                celValue = myGrid.jqGrid('getCell', selRowId, 'GoodId');
+            function() {
+                var myGrid = $("#GridTable"),
+                    selRowId = myGrid.jqGrid("getGridParam", "selrow"),
+                    celValue = myGrid.jqGrid("getCell", selRowId, "GoodId");
                 $.ajax({
-                    url: "/Goods/DetailInfo",
-                    type: "GET",
-                    data: { id: celValue }
-                })
-                .done(function (partialViewResult) {
-                    $("#goodDetInfo").html(partialViewResult);
-                    $(".operationEditForm").empty();
-                });
-                //to save current page on sorting
-                var postpage = jQuery("#GridTable").getGridParam('postData');
-                jQuery("#GridTable").setGridParam({ page: postpage.page });
+                        url: "/Goods/DetailInfo",
+                        type: "GET",
+                        data: { id: celValue }
+                    })
+                    .done(function(partialViewResult) {
+                        $("#good-det-inf").html(partialViewResult);
+                        $(".operationEditForm").empty();
+                    });
+
+
             },
         //to change good's full view after row deleting
-        loadComplete: function(data){
-            var myGrid = $('#GridTable'),
-                selRowId = myGrid.jqGrid('getGridParam', 'selrow'),
-                celValue = myGrid.jqGrid('getCell', selRowId, 'GoodId');
+        loadComplete: function(data) {
+            var myGrid = $("#GridTable"),
+                selRowId = myGrid.jqGrid("getGridParam", "selrow"),
+                celValue = myGrid.jqGrid("getCell", selRowId, "GoodId");
             $.ajax({
-                url: "/Goods/DetailInfo",
-                type: "GET",
-                data: { id: celValue }
-            })
-            .done(function (partialViewResult) {
-                $("#goodDetInfo").html(partialViewResult);
-                $(".operationEditForm").empty();
-            });
-        },
-
-    }).navGrid('#pager', { edit: false, add: true, del: true, search: false, refresh: true, refreshstate: "current" },
-       
-        {
-            // edit options
-            zIndex: 100,
-            url: '/Goods/Edit',
-            closeOnEscape: true,
-            closeAfterEdit: true,
-            recreateForm: true,
-            afterComplete: function (response) {
-                if (response.responseText) {
-                    alert(response.responseText);
-                }
-                var myGrid = $('#GridTable'),
-                selRowId = myGrid.jqGrid('getGridParam', 'selrow'),
-                celValue = myGrid.jqGrid('getCell', selRowId, 'GoodId');
-                $.ajax({
                     url: "/Goods/DetailInfo",
                     type: "GET",
                     data: { id: celValue }
                 })
-                .done(function (partialViewResult) {
-                    $("#goodDetInfo").html(partialViewResult);
+                .done(function(partialViewResult) {
+                    $("#good-det-inf").html(partialViewResult);
+                    $(".operationEditForm").empty();
                 });
+        }
+    }).navGrid("#pager", { edit: false, add: true, del: true, search: false, refresh: true, refreshstate: "current" },
+    {
+        // edit options
+        zIndex: 100,
+        url: "/Goods/Edit",
+        closeOnEscape: true,
+        closeAfterEdit: true,
+        recreateForm: true,
+        afterComplete: function(response) {
+            if (response.responseText) {
+                alert(response.responseText);
             }
-        },
-        {
-            // add options
-            zIndex: 100,
-            url: "/Goods/Create",
-            closeOnEscape: true,
-            closeAfterAdd: true,
-            
-            afterComplete: function (response) {
-                if (response.responseText) {
-                    alert(response.responseText);
-                }
-            }
-        },
-        {
-            // delete options
-            zIndex: 100,
-            url: "/Goods/Delete",
-            closeOnEscape: true,
-            closeAfterDelete: true,
-            recreateForm: true,
-            
-            msg: "Are you sure you want to delete this task?",
-            afterComplete: function (response) {
-                if (response.responseText) {
-                    alert(response.responseText);
-                }
-            }
-        });
+            var myGrid = $("#GridTable"),
+                selRowId = myGrid.jqGrid("getGridParam", "selrow"),
+                celValue = myGrid.jqGrid("getCell", selRowId, "GoodId");
+            $.ajax({
+                    url: "/Goods/DetailInfo",
+                    type: "GET",
+                    data: { id: celValue }
+                })
+                .done(function(partialViewResult) {
+                    $("#good-det-inf").html(partialViewResult);
+                });
+        }
+    },
+    {
+        // add options
+        zIndex: 100,
+        url: "/Goods/Create",
+        closeOnEscape: true,
+        closeAfterAdd: true,
 
-    $('#GridTable').inlineNav('#pager', {
+        afterComplete: function(response) {
+            if (response.responseText) {
+                alert(response.responseText);
+            }
+        }
+    },
+    {
+        // delete options
+        zIndex: 100,
+        url: "/Goods/Delete",
+        closeOnEscape: true,
+        closeAfterDelete: true,
+        recreateForm: true,
+
+        msg: "Are you sure you want to delete this task?",
+        afterComplete: function(response) {
+            if (response.responseText) {
+                alert(response.responseText);
+            }
+        }
+    });
+
+    $("#GridTable").inlineNav("#pager", {
         edit: true,
         add: false,
         del: false,
@@ -171,36 +191,28 @@ $(function () {
         editParams: {
             keys: true,
             //to change view after edit
-            aftersavefunc: function (response) {
+            aftersavefunc: function(response) {
 
-                var myGrid = $('#GridTable'),
-                selRowId = myGrid.jqGrid('getGridParam', 'selrow'),
-                celValue = myGrid.jqGrid('getCell', selRowId, 'GoodId');
+                var myGrid = $("#GridTable"),
+                    selRowId = myGrid.jqGrid("getGridParam", "selrow"),
+                    celValue = myGrid.jqGrid("getCell", selRowId, "GoodId");
                 $.ajax({
-                    url: "/Goods/DetailInfo",
-                    type: "GET",
-                    data: { id: celValue }
-                })
-                .done(function (partialViewResult) {
-                    $("#goodDetInfo").html(partialViewResult);
-                });
+                        url: "/Goods/DetailInfo",
+                        type: "GET",
+                        data: { id: celValue }
+                    })
+                    .done(function(partialViewResult) {
+                        $("#good-det-inf").html(partialViewResult);
+                    });
                 $(".operationEditForm").empty();
-            },
-            //on edit click event - save for future
+                alert("Product was edit");
+            } //on edit click event - save for future
             //oneditfunc: ReloadAdd
-        },
+        }
     });
 
 });
 
-
-function onSuccess(result) {
-    if (result.url) {
-        // if the server returned a JSON object containing an url
-        // property we redirect the browser to that url
-        window.location.href = result.url;
-    }
-}
 
 //function ReloadAdd() {
 //    alert("Reload");
@@ -208,42 +220,33 @@ function onSuccess(result) {
 //checking that price is valid
 function figureValid(value, colname) {
     //1)is positive number
-        if (value <=0) 
-            return [false, "Price must be positive"];
-        var commaPattern = /^\d+,*\d*$/;
-        var dotPattern = /^\d+\.*\d*$/;
+    if (value <= 0)
+        return [false, "Price must be positive"];
+    var commaPattern = /^\d+,*\d*$/;
+    var dotPattern = /^\d+\.*\d*$/;
     //2)right number
-        if (commaPattern.test(value))
-            {
-                return [true,""];
-            }
-        else
-        {
-            //3)Using .
-            if (dotPattern.test(value)) {
-                return [false, "Use comma instead of dot"];
-            }
-            //4)Using characters
-            else
-            {
-                return [false, "Input number"];
-            }
+    if (commaPattern.test(value)) {
+        return [true, ""];
+    } else {
+        //3)Using .
+        if (dotPattern.test(value)) {
+            return [false, "Use comma instead of dot"];
         }
+        //4)Using characters
+        else {
+            return [false, "Input number"];
+        }
+    }
 }
 
 //Check that name doesn't include tags
 function notATag(value, colname) {
     //patterns
     var openTag = /<\w*>/;
-    var closetag = /<\w*\/\w*>/
-
-    if (!openTag.test(value) && !closetag.test(value)) 
-    {
-        return [true,""];
-    }
-    else {
+    var closetag = /<\w*\/\w*>/;
+    if (!openTag.test(value) && !closetag.test(value)) {
+        return [true, ""];
+    } else {
         return [false, "name cann't contain tags"];
     }
 }
-
-

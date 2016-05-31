@@ -13,6 +13,7 @@
 /*jshint evil:true, eqeqeq:false, eqnull:true, devel:true */
 /*global jQuery, DOMParser, ActiveXObject */
 
+
 (function ($) {
 "use strict";
 $.jgrid = $.jgrid || {};

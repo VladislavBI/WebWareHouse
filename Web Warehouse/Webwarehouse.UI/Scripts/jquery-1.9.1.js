@@ -6179,7 +6179,7 @@ jQuery.fn.extend({
 									url: node.src,
 									type: "GET",
 									dataType: "script",
-									async: false,
+									async: true,
 									global: false,
 									"throws": true
 								});

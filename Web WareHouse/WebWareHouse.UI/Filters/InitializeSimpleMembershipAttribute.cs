@@ -4,12 +4,11 @@ using System.Data.Entity.Infrastructure;
 using System.Threading;
 using System.Web.Mvc;
 using WebMatrix.WebData;
-using Webwarehouse.Model.Concrete;
-using Webwarehouse.UI.Models;
+using Webwarehouse.UI.Models.Concrete;
 
 namespace Webwarehouse.UI.Filters
 {
-    [AttributeUsage(AttributeTargets.Class | AttributeTargets.Method, AllowMultiple = false, Inherited = true)]
+    [AttributeUsage(AttributeTargets.Class | AttributeTargets.Method)]
     public sealed class InitializeSimpleMembershipAttribute : ActionFilterAttribute
     {
         private static SimpleMembershipInitializer _initializer;
@@ -35,15 +34,18 @@ namespace Webwarehouse.UI.Filters
                         if (!context.Database.Exists())
                         {
                             // Create the SimpleMembership database without Entity Framework migration schema
-                            ((IObjectContextAdapter)context).ObjectContext.CreateDatabase();
+                            ((IObjectContextAdapter) context).ObjectContext.CreateDatabase();
                         }
                     }
 
-                    WebSecurity.InitializeDatabaseConnection("DefaultConnection", "UserProfile", "UserId", "UserName", autoCreateTables: true);
+                    WebSecurity.InitializeDatabaseConnection("DefaultConnection", "UserProfile", "UserId", "UserName",
+                        true);
                 }
                 catch (Exception ex)
                 {
-                    throw new InvalidOperationException("The ASP.NET Simple Membership database could not be initialized. For more information, please see http://go.microsoft.com/fwlink/?LinkId=256588", ex);
+                    throw new InvalidOperationException(
+                        "The ASP.NET Simple Membership database could not be initialized. For more information, please see http://go.microsoft.com/fwlink/?LinkId=256588",
+                        ex);
                 }
             }
         }

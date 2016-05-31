@@ -1,52 +1,54 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
-using System.Web;
 using System.Web.Mvc;
-using Webwarehouse.Model.Abstract;
-using Webwarehouse.Model.Concrete;
-using Webwarehouse.Model.Entities;
 using Webwarehouse.UI.Models;
+using Webwarehouse.UI.Models.Abstract;
+using Webwarehouse.UI.Models.Concrete;
+using Webwarehouse.UI.Models.Entities;
 
 namespace Webwarehouse.UI.Controllers
 {
     public class GoodsController : Controller
     {
         /// <summary>
-        /// Current good detail info
+        /// Database context.
         /// </summary>
-        GoodStatisticViewModel gStat;
+        private WarehouseContext _context;
+
         /// <summary>
-        /// Database context
+        /// Current good detail info.
         /// </summary>
-        WarehouseContext context;
-        EFGoodsManager goodsMan=new EFGoodsManager();
+        private GoodStatisticViewModel _goodStatisticVM;
+
+        /// <summary>
+        /// Interface for goods main EF operations.
+        /// </summary>
+        private readonly EfGoodManager _goodMananager;
 
         public GoodsController()
         {}
-        public GoodsController(IGoodsManager goodsMan)
+
+        /// <summary>
+        /// To apply DI in separate window
+        /// </summary>
+        /// <param name="goodsMananager">main goods EF opearions</param>
+        public GoodsController(IGoodManager goodsMananager)
         {
-            //this.goodsMan = goodsMan;
+            _goodMananager = (EfGoodManager) goodsMananager;
         }
-
-
-        public ActionResult Index()
-        {
-            return View();
-        }
-
-
+        /*
         public ActionResult AddGood()
         {
             return PartialView();
         }
+
         [HttpPost]
-        public ActionResult AddGood(Good g)
+        public ActionResult AddGood(Good good)
         {
-            if (!goodsMan.AlreadyHaveGood(g.GoodName))
+            if (!_goodMananager.AlreadyHaveGood(good.GoodName))
             {
-                goodsMan.AddProduct(g);
+                _goodMananager.AddGood(good);
             }
             else
             {
@@ -56,103 +58,98 @@ namespace Webwarehouse.UI.Controllers
         }
 
         /// <summary>
-        /// Detailed info of good, chosen in jqgrid
+        ///     Detailed info of good, chosen in jqgrid
         /// </summary>
         /// <param name="id">id of selected good, if no good choosed = -1</param>
         /// <returns>DetailInfo PartialView with selected goods data</returns>
-        public PartialViewResult DetailInfo(int id = -1)
-        {
-            gStat = new GoodStatisticViewModel(id);
-            return PartialView(gStat);
-        }
-        public ActionResult OperationSelector(object idVal, string Command)
-        {
-            string[] a = (string[])idVal;
-            int id = Convert.ToInt32(a[0]);
-            if (Command == "Статистика операций")
-            {
-                return Json(new { url = Url.Action("GetOperationsList", "Operations", new { goodId = id }) });
-            }
-            else
-            {
-                return Json(new { url = Url.Action("Add", "Operations", new { goodId = id }) });
-            }
-        }
-
+       
+        
         /// <summary>
-        /// Create view, which contains jqgrid
+        ///     Creating command for redirect
         /// </summary>
-        /// <returns>GoodListShow PartialView</returns>
-        public PartialViewResult GoodListShow()
+        /// <param name="idValue"></param>
+        /// <returns></returns>
+        public ActionResult OperationSelector(int idValue)
+        {
+            return Json(new {url = Url.Action("GetOperationsList", "Operations", new {goodId = idValue})});
+        }
+        */
+        /// <summary>
+        /// Create goods list view, which is uesd for jqgrid.
+        /// </summary>
+        /// <returns> Partial view with list of goods</returns>
+        public PartialViewResult GoodsListShow()
         {
             return PartialView();
         }
 
         /// <summary>
-        /// Creating goods list for jqgrid, their insuing sorting
+        /// Return view with detail info of new good.
+        /// </summary>
+        /// <param name="id">Good's id</param>
+        /// <returns>partial view with good's detailed info</returns>
+        public PartialViewResult DetailInfo(int id = -1)
+        {
+            _goodStatisticVM = new GoodStatisticViewModel(id);
+            return PartialView(_goodStatisticVM);
+        }
+        /// <summary>
+        /// Creating goods list for jqgrid, their insuing sorting.
         /// </summary>
         /// <param name="sidx">Sorting row name</param>
         /// <param name="sord">Asc or desc</param>
         /// <param name="page">page number</param>
         /// <param name="rows">number of rows on page</param>
         /// <returns>data for jqgrid</returns>
-        public JsonResult GoodsList(string sidx, string sord, int page, int rows)  //Gets the todo Lists.
+        public JsonResult GoodsList(string sidx, string sord, int page, int rows) //Gets the todo Lists.
         {
             //getting jqgrid curunt page and page size
-            int pageIndex = Convert.ToInt32(page) - 1;
-            int pageSize = rows;
+            var pageIndex = Convert.ToInt32(page) - 1;
+            var pageSize = rows;
             //current user
-            int uId = Convert.ToInt32(Session["UserId"]);
 
-            using (context = new WarehouseContext())
+            using (_context = new WarehouseContext())
             {
-
                 //getting data for jqgrid from entity
-                var GoodsResults = context.Goods.Select(
-                                    a => new
-                                    {
-                                        a.GoodId,
-                                        a.GoodName,
-                                        a.Price,
-                                    });
-
-
-
-
+                var goodsResults = _context.Goods.Select(
+                    a => new
+                    {
+                        a.GoodId,
+                        a.GoodName,
+                        a.Price
+                    });
 
 
                 //get total pages and rows quantity
-                int totalRecords = GoodsResults.Count();
-                var totalPages = (int)Math.Ceiling((float)totalRecords / (float)rows);
+                var totalRecords = goodsResults.Count();
+                var totalPages = (int) Math.Ceiling(totalRecords/(float) rows);
 
                 //choose parameter to sort, sorting
                 switch (sidx)
                 {
-
-
                     case "Price":
                         if (sord.ToUpper() == "DESC")
                         {
-                            GoodsResults = GoodsResults.OrderByDescending(s => s.Price);
-                            GoodsResults = GoodsResults.Skip(pageIndex * pageSize).Take(pageSize);
+                            goodsResults = goodsResults.OrderByDescending(s => s.Price);
+                            goodsResults = goodsResults.Skip(pageIndex*pageSize).Take(pageSize);
                         }
                         else
                         {
-                            GoodsResults = GoodsResults.OrderBy(s => s.Price);
-                            GoodsResults = GoodsResults.Skip(pageIndex * pageSize).Take(pageSize);
+                            goodsResults = goodsResults.OrderBy(s => s.Price);
+                            goodsResults = goodsResults.Skip(pageIndex*pageSize).Take(pageSize);
                         }
                         break;
 
                     default:
                         if (sord.ToUpper() == "DESC")
                         {
-                            GoodsResults = GoodsResults.OrderByDescending(s => s.GoodName);
-                            GoodsResults = GoodsResults.Skip(pageIndex * pageSize).Take(pageSize);
+                            goodsResults = goodsResults.OrderByDescending(s => s.GoodName);
+                            goodsResults = goodsResults.Skip(pageIndex*pageSize).Take(pageSize);
                         }
                         else
                         {
-                            GoodsResults = GoodsResults.OrderBy(s => s.GoodName);
-                            GoodsResults = GoodsResults.Skip(pageIndex * pageSize).Take(pageSize);
+                            goodsResults = goodsResults.OrderBy(s => s.GoodName);
+                            goodsResults = goodsResults.Skip(pageIndex*pageSize).Take(pageSize);
                         }
                         break;
                 }
@@ -164,53 +161,40 @@ namespace Webwarehouse.UI.Controllers
                     total = totalPages,
                     page,
                     records = totalRecords,
-                    rows = GoodsResults.ToList()
+                    rows = goodsResults.ToList()
                 };
-               
+
                 //returning data to  jqgrid by get method
                 return Json(jsonData, JsonRequestBehavior.AllowGet);
             }
         }
 
-
-        
-
-           
-            
-        
-
         /// <summary>
-        /// Creating of new good
+        /// Creating of new good.
         /// </summary>
         /// <param name="objGood">New good's data, excluding it's id</param>
-        /// <returns>Operation is successful message</returns>
+        /// <returns>Operation is or not successful message</returns>
         [HttpPost]
         public string Create([Bind(Exclude = "GoodId")] Good objGood)
         {
             //Summary message - alert in Layout
-            string msg="";
+            string msg;
             try
             {
                 //validation
                 if (ModelState.IsValid)
                 {
-                    //don't have such good's name check
-                    if (!goodsMan.AlreadyHaveGood(objGood.GoodName))
+                    //check if we have this good
+                    if (!_goodMananager.AlreadyHaveGood(objGood.GoodName))
                     {
-                        using (context=new WarehouseContext())
-                        {
-                            context.Goods.Add(objGood);
-                            context.SaveChanges();
-                            msg = "Товар сохранен";
-                        }
-                        
+                        _goodMananager.AddGood(objGood);
+                        msg = "Товар сохранен";
                     }
-                    //have such good's name
+                    //already have this good
                     else
                     {
                         msg = "already have this good";
                     }
-                   
                 }
                 else
                 {
@@ -223,20 +207,33 @@ namespace Webwarehouse.UI.Controllers
             }
             return msg;
         }
+
+        /// <summary>
+        /// Editing of existend good
+        /// </summary>
+        /// <param name="objGood">Editable object</param>
+        /// <returns>Operation is or not successful message</returns>
         public string Edit(Good objGood)
         {
+            //Returning message.
             string msg;
             try
             {
+                //Goods data validation.
                 if (ModelState.IsValid)
                 {
-                    context.Entry(objGood).State = EntityState.Modified;
-                    context.SaveChanges();
-                    msg = "Товар изменен";
+                    using (_context = new WarehouseContext())
+                    {
+                        //Modifying changed good
+                        _context.Entry(objGood).State = EntityState.Modified;
+                        _context.SaveChanges();
+                        msg = "Good was changed";
+                    }
                 }
                 else
                 {
-                    msg = "Неправильные данные для товара";
+                    //validation is not successful
+                    msg = "Wrong data for good";
                 }
             }
             catch (Exception ex)
@@ -245,13 +242,33 @@ namespace Webwarehouse.UI.Controllers
             }
             return msg;
         }
-        public string Delete(int Id)
-        {
-            Good todolist = context.Goods.Find(Id);
-            context.Goods.Remove(todolist);
-            context.SaveChanges();
-            return "Товар удален";
-        }
 
+        /// <summary>
+        /// Deleting of selected  good.
+        /// </summary>
+        /// <param name="id">selected good id</param>
+        /// <returns></returns>
+        public string Delete(int id)
+        {
+            using (_context=new WarehouseContext())
+            { 
+                try
+                {
+                    //Try to delete selected good.
+                    var todolist = _context.Goods.Find(id);
+                    _context.Goods.Remove(todolist);
+                    _context.SaveChanges();
+                    return "Good was deleted";
+                }
+                catch (Exception)
+                {
+                    //Something go wrong
+                    return "Delete error";
+                }
+                
+            }
+            
+            
+        }
     }
 }

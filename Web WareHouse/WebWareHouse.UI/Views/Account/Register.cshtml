@@ -1,4 +1,4 @@
-﻿@model Webwarehouse.Model.Entities.RegisterModel
+﻿@model Webwarehouse.UI.Models.Entities.RegisterModel
 @{
     ViewBag.Title = "Регистрация";
     Layout = "~/Views/Shared/_LayoutLogin.cshtml";
@@ -30,7 +30,7 @@
                     @Html.PasswordFor(m => m.ConfirmPassword)
                 </li>
             </ol>
-            <input type="submit" value="Регистрация" />
+            <input type="submit" value="Регистрация"/>
             @Html.ActionLink("Вернуться", "Login") к вводу логина.
         </fieldset>
     }

@@ -1,4 +1,4 @@
-﻿@model Webwarehouse.Model.Entities.LoginModel
+﻿@model Webwarehouse.UI.Models.Entities.LoginModel
 
 @{
     ViewBag.Title = "Login";
@@ -10,38 +10,39 @@
 </hgroup>
 
 <section >
-<h2>Login for connection</h2>
-@using (Html.BeginForm("Login", "Account",
-                new { ReturnUrl = ViewBag.ReturnUrl }, 
-                FormMethod.Post, new { id = "signupform" })) {
-                @Html.AntiForgeryToken()
-                @Html.ValidationSummary(true)
+    <h2>Login for connection</h2>
+    @using (Html.BeginForm("Login", "Account",
+        new {ViewBag.ReturnUrl},
+        FormMethod.Post, new {id = "signupform"}))
+    {
+        @Html.AntiForgeryToken()
+        @Html.ValidationSummary(true)
 
-    <fieldset>
-        <legend>Log in Form</legend>
-        <ol>
-            <li>
-                <label>User name</label>
-                @Html.TextBoxFor(m => m.UserName, new { @class="center"})
-                @Html.ValidationMessageFor(m => m.UserName)
+        <fieldset>
+            <legend>Log in Form</legend>
+            <ol>
+                <li>
+                    <label>User name</label>
+                    @Html.TextBoxFor(m => m.UserName, new {@class = "center"})
+                    @Html.ValidationMessageFor(m => m.UserName)
 
-            </li>
-            <li>
-                <label>Password</label>
-                @Html.PasswordFor(m => m.Password)
-                @Html.ValidationMessageFor(m => m.Password)
-            </li>
-            <li>
-                @Html.CheckBoxFor(m => m.RememberMe)
-                @Html.Label("Remember me?", new { @class = "checkbox" })
-            </li>
-        </ol>
-        <input type="submit" value="Вход" />
-    </fieldset>
-    <p>
-        @Html.ActionLink("Register", "Register"), if you don't have account yet.
-    </p>
-}
+                </li>
+                <li>
+                    <label>Password</label>
+                    @Html.PasswordFor(m => m.Password)
+                    @Html.ValidationMessageFor(m => m.Password)
+                </li>
+                <li>
+                    @Html.CheckBoxFor(m => m.RememberMe)
+                    @Html.Label("Remember me?", new {@class = "checkbox"})
+                </li>
+            </ol>
+            <input type="submit" value="Вход"/>
+        </fieldset>
+        <p>
+            @Html.ActionLink("Register", "Register"), if you don't have account yet.
+        </p>
+    }
 </section>
 @section Scripts {
     @Scripts.Render("~/bundles/jqueryval")

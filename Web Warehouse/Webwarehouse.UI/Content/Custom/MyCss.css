@@ -1,23 +1,54 @@
-﻿.HorAlCenter {
-    margin: auto;
-    width: 60%;
-    border: 3px solid #73AD21;
-    padding: 10px;
+﻿/*Create table with div.*/
+.table { display: table }
+/*Table row with div.*/
+.tr { display: table-row }
+/*table cell with div.*/
+.td { display: table-cell }
+/*Create table iframe full body width.*/
+.tableF {
+    display: table;
+    width: 100%;
 }
-.table {
-    display:table
+/*Creating wrapper without mentioned width resticts.*/
+#body-no-width {
+    clear: both;
+    padding-bottom: 35px;  
 }
-.tr {
-    display:table-row
+
+/*table cell included jqgrid, we need this form jqgrid resize in OperationList*/
+#jqgrid-td { width: 90%; }
+
+/*footer of pages*/
+#site-footer {
+    background-color: none repeat scroll 0 0 #f0f0f0;
+    bottom: 0;
+    margin-right: 10px;
+    margin-top: 50px;
+    position: fixed;
+    width: 2500px;
 }
-.td {
-    display:table-cell
+
+/*Style for detalized information of good*/
+#good-det-inf {
+    text-align: right;
+    width: 85%;
 }
-.tableF{
-    display:table;
-    width:90%;   
+/*Select tag normal view*/
+.my-select {
+    height: 30px;
+    width: 82%;
 }
-.bidyToMiddle{
-	display		: table-cell;
-	vertical-align	: middle;
+
+/*Changing width of text input at operation add view*/
+.goodNumber { width: 58%; }
+
+/*Full screen window with mmargin from header*/
+.static-window { margin-top: 50px; }
+
+/*Header tag with div*/
+.header-create{
+    width: 100%;
+    text-align:center;
+    font: bold 200% serif;
+    margin-bottom: 10px;
 }

@@ -1,4 +1,4 @@
-namespace Webwarehouse.Model.Migrations
+namespace Webwarehouse.UI.Migrations
 {
     using System;
     using System.Data.Entity;
