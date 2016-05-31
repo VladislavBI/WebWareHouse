@@ -28,7 +28,7 @@
             </section>
             <nav>
                 <ul id="menu">
-                    <li>@Html.ActionLink("Главная страница", "Index", "Home")</li>
+                    <li>@Html.ActionLink("Main page", "Index", "Home")</li>
                 </ul>
             </nav>
         </div>
@@ -58,14 +58,8 @@
         </div>
     </div>
 </div>
-<footer id="site-footer">
-    <div class="content-wrapper">
-        <div >
-            <p>&copy; @DateTime.Now.Year - Web Warehouse</p>
-        </div>
-    </div>
-</footer>
 
+@Html.CreateFooter(@DateTime.Now.Year +" - Web Warehouse")
 
 @RenderSection("scripts", false)
 </body>

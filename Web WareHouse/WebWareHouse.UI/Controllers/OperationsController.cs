@@ -28,7 +28,7 @@ namespace Webwarehouse.UI.Controllers
             {
                     goodTemp = _context.Goods.FirstOrDefault(x => x.GoodId == idValue);
             }
-            //if product exist
+            //if good exist
             if (goodTemp != null)
             {
                
@@ -42,7 +42,7 @@ namespace Webwarehouse.UI.Controllers
         }
 
         /// <summary>
-        /// Creating new operation for product
+        /// Creating new operation for good
         /// PS: addOpearion view hides in OperationValidation.js
         /// </summary>
         /// <param name="newOperation">Created operation</param>
@@ -58,7 +58,7 @@ namespace Webwarehouse.UI.Controllers
             //check for enough good at warehouse
             if (newOperation.OperType == OperationType.Outcome && !GoodEnought(newOperation.GoodId, newOperation.Quantity))
             {
-                TempData["opMessage"] = "You haven't got enough product";
+                TempData["opMessage"] = "You haven't got enough good";
             }
             else
             {
@@ -73,7 +73,7 @@ namespace Webwarehouse.UI.Controllers
                     //save operation
                     _context.Operations.Add(newOperation);
                     _context.SaveChanges();
-                    TempData["opMessage"] = "Product successfully saved";
+                    TempData["opMessage"] = "Operation successfully saved";
                 }
             }
 

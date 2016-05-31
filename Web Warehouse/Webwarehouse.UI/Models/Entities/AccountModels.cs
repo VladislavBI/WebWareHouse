@@ -73,7 +73,7 @@ namespace Webwarehouse.UI.Models.Entities
         /// User's password
         /// </summary>
         [Required]
-        [StringLength(255, ErrorMessage = "Password should contain nit more than {2} characters.", MinimumLength = 3)]
+        [StringLength(255, ErrorMessage = "Password should contain not less than {2} characters.", MinimumLength = 3)]
         [DataType(DataType.Password)]
         [Display(Name = "Password")]
         public string Password { get; set; }

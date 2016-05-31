@@ -13,14 +13,31 @@ function numFormat(cellvalue, options, rowObject) {
     
 }
 
+//refresing detailes of good when good info or sekection changed
+function detailedInfoViewRefresh() {
+    var myGrid = $("#GridTable"),
+                        selRowId = myGrid.jqGrid("getGridParam", "selrow"),
+                        celValue = myGrid.jqGrid("getCell", selRowId, "GoodId");
 
+    $.ajax({
+        url: "/Goods/DetailInfo",
+        type: "GET",
+        data: { id: celValue }
+    })
+        .done(function (partialViewResult) {
+            $("#good-det-inf").html(partialViewResult);
+        });
+
+    //clearing operationAdd View for previous good
+    $(".operationEditForm").empty();
+}
 $(function() {
     $("#GridTable").jqGrid({
         url: "/Goods/GoodsList",
         editurl: "/Goods/Edit",
         datatype: "json",
         mtype: "Get",
-        colNames: ["GoodId", "Имя", "Цена"],
+        colNames: ["GoodId", "Good Name", "Price"],
         colModel: [
             //column for good's ids
             { key: true, hidden: true, name: "GoodId", index: "GoodId", editable: true },
@@ -81,53 +98,15 @@ $(function() {
         //to get good's detailed info view when row is selected
         onSelectRow:
             function() {
-                var myGrid = $("#GridTable"),
-                    selRowId = myGrid.jqGrid("getGridParam", "selrow"),
-                    celValue = myGrid.jqGrid("getCell", selRowId, "GoodId");
-
-                $.ajax({
-                        url: "/Goods/DetailInfo",
-                        type: "GET",
-                        data: { id: celValue }
-                    })
-                    .done(function(partialViewResult) {
-                        $("#good-det-inf").html(partialViewResult);
-                    });
-
-                //clearing operationAdd View for previous good
-                $(".operationEditForm").empty();
+                detailedInfoViewRefresh();
             },
         gridComplete:
             function() {
-                var myGrid = $("#GridTable"),
-                    selRowId = myGrid.jqGrid("getGridParam", "selrow"),
-                    celValue = myGrid.jqGrid("getCell", selRowId, "GoodId");
-                $.ajax({
-                        url: "/Goods/DetailInfo",
-                        type: "GET",
-                        data: { id: celValue }
-                    })
-                    .done(function(partialViewResult) {
-                        $("#good-det-inf").html(partialViewResult);
-                        $(".operationEditForm").empty();
-                    });
-
-
+                detailedInfoViewRefresh();
             },
         //to change good's full view after row deleting
         loadComplete: function(data) {
-            var myGrid = $("#GridTable"),
-                selRowId = myGrid.jqGrid("getGridParam", "selrow"),
-                celValue = myGrid.jqGrid("getCell", selRowId, "GoodId");
-            $.ajax({
-                    url: "/Goods/DetailInfo",
-                    type: "GET",
-                    data: { id: celValue }
-                })
-                .done(function(partialViewResult) {
-                    $("#good-det-inf").html(partialViewResult);
-                    $(".operationEditForm").empty();
-                });
+            detailedInfoViewRefresh();
         }
     }).navGrid("#pager", { edit: false, add: true, del: true, search: false, refresh: true, refreshstate: "current" },
     {
@@ -137,22 +116,6 @@ $(function() {
         closeOnEscape: true,
         closeAfterEdit: true,
         recreateForm: true,
-        afterComplete: function(response) {
-            if (response.responseText) {
-                alert(response.responseText);
-            }
-            var myGrid = $("#GridTable"),
-                selRowId = myGrid.jqGrid("getGridParam", "selrow"),
-                celValue = myGrid.jqGrid("getCell", selRowId, "GoodId");
-            $.ajax({
-                    url: "/Goods/DetailInfo",
-                    type: "GET",
-                    data: { id: celValue }
-                })
-                .done(function(partialViewResult) {
-                    $("#good-det-inf").html(partialViewResult);
-                });
-        }
     },
     {
         // add options
@@ -193,26 +156,17 @@ $(function() {
             //to change view after edit
             aftersavefunc: function(response) {
 
-                var myGrid = $("#GridTable"),
-                    selRowId = myGrid.jqGrid("getGridParam", "selrow"),
-                    celValue = myGrid.jqGrid("getCell", selRowId, "GoodId");
-                $.ajax({
-                        url: "/Goods/DetailInfo",
-                        type: "GET",
-                        data: { id: celValue }
-                    })
-                    .done(function(partialViewResult) {
-                        $("#good-det-inf").html(partialViewResult);
-                    });
-                $(".operationEditForm").empty();
-                alert("Product was edit");
-            } //on edit click event - save for future
+                detailedInfoViewRefresh()
+                alert("Good was edited");
+            }
+            //on edit click event - save for future
             //oneditfunc: ReloadAdd
         }
     });
 
 });
 
+//JQGRID validation options
 
 //function ReloadAdd() {
 //    alert("Reload");

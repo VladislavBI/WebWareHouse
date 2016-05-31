@@ -48,7 +48,7 @@ function request() {
         if (($(this).val() == "")) {
             $(this).after("<span class=\"txterror\">Must be filled</span>").css("borderColor", "red");
         } else {
-            $(this).css("border", "none");
+            $(this).css("borderColor", "#e2e2e2");
         }
     });
     
@@ -57,7 +57,7 @@ function request() {
         if ((($(this).val() == ""))) {
             $(this).after("<span class=\"pswerror\">Must be filled</span>").css("borderColor", "red");
         } else {
-            $(this).css("border", "none");
+            $(this).css("borderColor", "#e2e2e2");
         }
     });
 }
@@ -75,7 +75,7 @@ function noTag() {
         if (openTag.test($(this).val()) || closetag.test($(this).val())) {
             $(this).after("<span class=\"txterror\">can not be tag</span>").css("borderColor", "red");
         } else {
-            $(this).css("border", "none");
+            $(this).css("borderColor", "#e2e2e2");
         }
     });
 
@@ -84,7 +84,7 @@ function noTag() {
         if (openTag.test($(this).val()) || closetag.test($(this).val())) {
             $(this).after("<span class=\"pswerror\">passsword can not be tag</span>").css("borderColor", "red");
         } else {
-            $(this).css("border", "none");
+            $(this).css("borderColor", "#e2e2e2");
         }
     });
 }
@@ -117,7 +117,7 @@ function LengthCheck() {
         if ((($(this).val().length < 3))) {
             $(this).after("<span class=\"pswerror\">minimum length for password is 3</span>").css("borderColor", "red");
         } else {
-            $(this).css("border", "none");
+            $(this).css("borderColor", "#e2e2e2");
         }
     });
 }

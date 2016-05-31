@@ -198,6 +198,7 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Helpers\HelperClass.cs" />
     <Compile Include="Infrastructure\DBWarehouseInitializer.cs" />
     <Compile Include="Migrations\201605210736312_MigrateDB.cs" />
     <Compile Include="Migrations\201605210736312_MigrateDB.Designer.cs">

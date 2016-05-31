@@ -43,7 +43,7 @@ function request() {
         //returning textbox border to normal
     else
     {
-        $(this).css("border", "none");
+        $(this).css("borderColor", "#e2e2e2");
     }
 }
 
@@ -58,7 +58,7 @@ function notString() {
         //returning textbox border to normal
     else
     {
-        $(this).css("border", "none");
+        $(this).css("borderColor", "#e2e2e2");
     }
 }
 
@@ -70,7 +70,7 @@ function isPositive()
     }
         //returning textbox border to normal
     else {
-        $(this).css("border", "none");
+        $(this).css("borderColor", "#e2e2e2");
     }
 }
 

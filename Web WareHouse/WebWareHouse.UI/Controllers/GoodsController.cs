@@ -188,7 +188,7 @@ namespace Webwarehouse.UI.Controllers
                     if (!_goodMananager.AlreadyHaveGood(objGood.GoodName))
                     {
                         _goodMananager.AddGood(objGood);
-                        msg = "Товар сохранен";
+                        msg = "Good was saved";
                     }
                     //already have this good
                     else

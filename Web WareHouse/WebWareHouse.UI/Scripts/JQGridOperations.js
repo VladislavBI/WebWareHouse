@@ -12,7 +12,7 @@ $(function() {
         url: "/Operations/OperationsList",
         datatype: "json",
         mtype: "Get",
-        colNames: ["OpId", "Пользователь", "Тип операции", "Кол-во", "Дата"],
+        colNames: ["OpId", "User", "Operation type", "Value", "Date"],
         colModel: [
             { key: true, hidden: true, name: "OperationId", index: "OperationId", editable: false },
             { key: false, name: "UserName", index: "UserName", uName: false, sortable: true },
@@ -25,7 +25,7 @@ $(function() {
         rowList: [10, 25, 50, 100],
         height: "100%",
         viewrecords: true,
-        caption: "Список операций по товару",
+        caption: "Opeartions list",
         emptyrecords: "No records to display",
         jsonReader: {
             root: "rows",
@@ -42,20 +42,6 @@ $(function() {
         },
         autowidth: true,
         multiselect: false,
-        oadComplete: function(data) {
-            var myGrid = $("#GridTable"),
-                selRowId = myGrid.jqGrid("getGridParam", "selrow"),
-                celValue = myGrid.jqGrid("getCell", selRowId, "GoodId");
-            $.ajax({
-                    url: "/Goods/DetailInfo",
-                    type: "GET",
-                    data: { id: celValue }
-                })
-                .done(function(partialViewResult) {
-                    $("#good-det-inf").html(partialViewResult);
-                    $(".operationEditForm").empty();
-                });
-        },
 
     }).navGrid("#pager", { edit: false, add: false, del: false, search: false, refresh: false });
 });

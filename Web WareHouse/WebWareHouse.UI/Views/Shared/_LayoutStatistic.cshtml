@@ -41,13 +41,7 @@
     @RenderBody()
 </section>
     <script src="~/Scripts/JQGridOperations.js"></script>
-<footer id="site-footer">
-    <div class="content-wrapper">
-        <div>
-            <p>&copy; @DateTime.Now.Year - Web Warehouse</p>
-        </div>
-    </div>
-</footer>
+@Html.CreateFooter(@DateTime.Now.Year + " - Web Warehouse")
 
 
 @RenderSection("scripts", false)
