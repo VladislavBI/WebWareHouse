@@ -12,9 +12,9 @@ namespace Webwarehouse.UI.Models
 
 
         /// <summary>
-        /// Main constructor - declarations of all properties
+        /// Main constructor - declarations of all properties.
         /// </summary>
-        /// <param name="goodId">good's for detalization Id</param>
+        /// <param name="goodId">Good's for detalization Id</param>
         public GoodStatisticViewModel(int goodId)
         {
             using (WarehouseContext cont = new WarehouseContext())
@@ -23,37 +23,42 @@ namespace Webwarehouse.UI.Models
                 GoodId = goodId;
                 if (goodId == -1)
                 {
-                    //If no good is selected
-                    //On start or with delete operation on good
+                    //If no good is selected -
+                    //on start or when deleting good.
                     GoodName = "Товар не выбран";
                 }
                 else
                 {
-                    //Filling good's name property
+                    //Filling good's name property.
                     GoodName = cont.Goods.Where(x => x.GoodId == goodId).Select(x => x.GoodName).FirstOrDefault();
                 }
-                //try to fill selected goods detail info properties
+                //Try to fill selected good's detail info.
                 try
                 {
-                    // //Filling good's price property
+                    //Filling good's price.
                     Price = cont.Goods.Where(x => x.GoodId == goodId).Select(x => x.Price).FirstOrDefault();
 
-                    //Calculating total quantity property
-                    //operation executed only if there were such operations
+                    //Calculating total quantity 
+                    //operation will execute only if there were such operations. 
+
+                    //Income (sum plus).
                     if (cont.Operations.Any(x => x.GoodId == goodId && x.OperType == OperationType.Income))
                         TotalQuantity =
                             cont.Operations.Where(x => x.GoodId == goodId && x.OperType == OperationType.Income)
                                 .Select(x => x.Quantity)
                                 .Sum();
+
+                    //Outcome (sum minus).
                     if (cont.Operations.Any(x => x.GoodId == goodId && x.OperType == OperationType.Outcome))
                         TotalQuantity -=
                             cont.Operations.Where(x => x.GoodId == goodId && x.OperType == OperationType.Outcome)
                                 .Select(x => x.Quantity)
                                 .Sum();
-                    //Calculation of total  price
+
+                    //Calculation total  price.
                     TotalPrice = Price*TotalQuantity;
                 }
-                //no good selected all is null
+                //No good selected - all is null.
                 catch
                 {
                     Price = 0;
@@ -74,18 +79,18 @@ namespace Webwarehouse.UI.Models
         public string GoodName { get; set; }
 
         /// <summary>
-        /// Price of detailed good
+        /// Price of detailed good.
         /// </summary>
         public decimal Price { get; set; }
 
         /// <summary>
-        /// Total quantity of good after all operations were executed
+        /// Total quantity of good after all operations were executed.
         /// </summary>
         public int TotalQuantity { get; set; }
 
         /// <summary>
-        /// Total quantity of good after all operations were executed, 
-        /// calculated from good's price
+        /// Total price of good after all operations were executed, 
+        /// calculated from good's price and remnants of stock.
         /// </summary>
         public decimal TotalPrice { get; set; }
     }

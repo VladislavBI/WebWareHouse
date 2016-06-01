@@ -12,14 +12,14 @@ namespace Webwarehouse.UI.Models.Abstract
         /// <summary>
         /// Adding of new good to base.
         /// </summary>
-        /// <param name="good">new good</param>
+        /// <param name="good">New good for add.</param>
         void AddGood(Good good);
 
         /// <summary>
-        /// Checking if we already have this good
+        /// Checking if we already have this good.
         /// </summary>
-        /// <param name="goodName">name of good for check</param>
-        /// <returns>true - exist</returns>
+        /// <param name="goodName">Name of good for check</param>
+        /// <returns>True - exist, false -not.</returns>
         bool AlreadyHaveGood(string goodName);
     }
 }

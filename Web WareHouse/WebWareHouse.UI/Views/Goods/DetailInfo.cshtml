@@ -1,27 +1,33 @@
-﻿@model Webwarehouse.UI.Models.GoodStatisticViewModel
+﻿    @* Partial view which cintains detail info of good *@
+
+@model Webwarehouse.UI.Models.GoodStatisticViewModel
 <center>
     <div id="good-det-inf">
 
+        @* Detail information *@
         <p class="editor-label">Name: @Model.GoodName</p>
         <p class="editor-label">Price:@Model.Price</p>
         <p class="editor-label">Total value:@Model.TotalPrice</p>
         <p id="tqInfo">Total quantity:@Model.TotalQuantity</p>
     </div>
+
+        @* If any good is chosen - apply good operations managment buttons *@
     @if (@Model.GoodId != -1)
     {
         <div class="table">
             <div class="tr">
 
                 <div class="td">
-
-                    @*  @using (Ajax.BeginForm("OperationSelector", new AjaxOptions { UpdateTargetId = "foo", OnSuccess = "onSuccess", HttpMethod = "Get" }))*@
+                        @*Get all operation for selected good  *@
                     @using (Html.BeginForm("GetOperationsList", "Operations"))
                     {
                         @Html.Hidden("idValue", Model.GoodId as int?)
                         <input type="submit" name="Command" value="Operation statistic"/>
                     }
                 </div>
+
                 <div class="td">
+                    @* Add new operation for selected good *@
                     @using (Ajax.BeginForm("AddOperation", "Operations", new AjaxOptions {UpdateTargetId = "addOper", HttpMethod = "Get"}))
                     {
                         @Html.Hidden("idValue", Model.GoodId as int?)
@@ -34,6 +40,8 @@
         <script src="@Url.Content("~/Scripts/Others/Service.js")" type="text/javascript"></script>
     }
 </center>
+
+@* Notification message after new operation were added *@
 @if (TempData["opMessage"] != null)
 {
     <script type="text/javascript">

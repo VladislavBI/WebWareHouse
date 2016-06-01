@@ -6,7 +6,7 @@ using System.Web.Mvc;
 namespace Webwarehouse.UI.Models.Entities
 {
     /// <summary>
-    /// Goods at warehouse table
+    /// Goods at warehouse table.
     /// </summary>
     [Table("Goods")]
     public class Good
@@ -28,7 +28,7 @@ namespace Webwarehouse.UI.Models.Entities
         public decimal Price { get; set; }
 
         /// <summary>
-        /// all operations, which were executed on current good
+        /// All operations of current good (navigation property).
         /// </summary>
         [HiddenInput(DisplayValue = false)]
         public List<Operation> Operations { get; set; }

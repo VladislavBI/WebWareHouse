@@ -6,12 +6,12 @@ using System.Web.Mvc;
 namespace Webwarehouse.UI.Models.Entities
 {
     /// <summary>
-    /// Types of operations
+    /// Types of operations.
     /// </summary>
     public enum OperationType
     {
         /// <summary>
-        /// Good were carried to warehouse
+        /// Good were carried to warehouse.
         /// </summary>
         Income = 1,
         /// <summary>
@@ -41,7 +41,7 @@ namespace Webwarehouse.UI.Models.Entities
         public int Quantity { get; set; }
 
         /// <summary>
-        /// Type of opertaion
+        /// Type of opertaion.
         /// </summary>
         [Required]
         public OperationType OperType { get; set; }
@@ -54,16 +54,17 @@ namespace Webwarehouse.UI.Models.Entities
         public DateTime OperationTime { get; set; }
 
         /// <summary>
-        /// Good at which the operation were executed.
+        /// Good at which the operation were executed (navigation property).
         /// </summary>
         public Good GoodAttached { get; set; }
         /// <summary>
         /// Id of user, who executed the operation.     
         /// /// </summary>
+        [Required]
         public int UserId { get; set; }
 
         /// <summary>
-        ///  User, who executed the operation
+        ///  User, who executed the operation (navigation property).
         /// </summary>
         public UserProfile User { get; set; }
     }

@@ -6,19 +6,19 @@ using Webwarehouse.UI.Models.Entities;
 namespace Webwarehouse.UI.Models.Concrete
 {
     /// <summary>
-    /// Entity framework IGoodManager realization
+    /// Entity framework IGoodManager realization.
     /// </summary>
     public class EfGoodManager : IGoodManager
     {
         /// <summary>
-        /// database context
+        /// Database context.
         /// </summary>
         private WarehouseContext _context;
 
         /// <summary>
-        /// Adding good to base using entity framework
+        /// Adding good to base using entity framework.
         /// </summary>
-        /// <param name="good">good for add</param>
+        /// <param name="good">Good for add</param>
         public void AddGood(Good good)
         {
             using (_context = new WarehouseContext())
@@ -29,9 +29,9 @@ namespace Webwarehouse.UI.Models.Concrete
         }
 
         /// <summary>
-        /// Check if good exist using entity framework
+        /// Check if good exist using entity framework.
         /// </summary>
-        /// <param name="goodName">name of good for check</param>
+        /// <param name="goodName">Name of good for check</param>
         /// <returns></returns>
         public bool AlreadyHaveGood(string goodName)
         {
@@ -39,8 +39,10 @@ namespace Webwarehouse.UI.Models.Concrete
             {
                 if (_context.Goods.Any(x => x.GoodName.ToLower() == goodName.ToLower()))
                 {
+                    //We have such good's name.
                     return true;
                 }
+                //We haven't such good's name.
                 return false;
             }
         }

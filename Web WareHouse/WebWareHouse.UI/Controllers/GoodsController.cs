@@ -24,56 +24,21 @@ namespace Webwarehouse.UI.Controllers
         /// <summary>
         /// Interface for goods main EF operations.
         /// </summary>
-        private readonly EfGoodManager _goodMananager;
+        private readonly EfGoodManager _goodManager;
 
         public GoodsController()
         {}
 
         /// <summary>
-        /// To apply DI in separate window
+        /// To apply DI.
         /// </summary>
-        /// <param name="goodsMananager">main goods EF opearions</param>
+        /// <param name="goodsMananager">Main goods EF opearions.</param>
         public GoodsController(IGoodManager goodsMananager)
         {
-            _goodMananager = (EfGoodManager) goodsMananager;
+            _goodManager = (EfGoodManager) goodsMananager;
         }
-        /*
-        public ActionResult AddGood()
-        {
-            return PartialView();
-        }
-
-        [HttpPost]
-        public ActionResult AddGood(Good good)
-        {
-            if (!_goodMananager.AlreadyHaveGood(good.GoodName))
-            {
-                _goodMananager.AddGood(good);
-            }
-            else
-            {
-                ModelState.AddModelError("", "У вас уже есть такой товар");
-            }
-            return PartialView();
-        }
-
-        /// <summary>
-        ///     Detailed info of good, chosen in jqgrid
-        /// </summary>
-        /// <param name="id">id of selected good, if no good choosed = -1</param>
-        /// <returns>DetailInfo PartialView with selected goods data</returns>
        
-        
-        /// <summary>
-        ///     Creating command for redirect
-        /// </summary>
-        /// <param name="idValue"></param>
-        /// <returns></returns>
-        public ActionResult OperationSelector(int idValue)
-        {
-            return Json(new {url = Url.Action("GetOperationsList", "Operations", new {goodId = idValue})});
-        }
-        */
+
         /// <summary>
         /// Create goods list view, which is uesd for jqgrid.
         /// </summary>
@@ -96,21 +61,21 @@ namespace Webwarehouse.UI.Controllers
         /// <summary>
         /// Creating goods list for jqgrid, their insuing sorting.
         /// </summary>
-        /// <param name="sidx">Sorting row name</param>
-        /// <param name="sord">Asc or desc</param>
-        /// <param name="page">page number</param>
-        /// <param name="rows">number of rows on page</param>
-        /// <returns>data for jqgrid</returns>
-        public JsonResult GoodsList(string sidx, string sord, int page, int rows) //Gets the todo Lists.
+        /// <param name="sidx">Sorted column name</param>
+        /// <param name="sord">Sorting direction:ASC or DESC</param>
+        /// <param name="page">Current page number</param>
+        /// <param name="rows">Number of rows on page</param>
+        /// <returns>Data for jqgrid</returns>
+        public JsonResult GoodsList(string sidx, string sord, int page, int rows) 
         {
-            //getting jqgrid curunt page and page size
+            //Getting jqgrid curunt page and page size.
             var pageIndex = Convert.ToInt32(page) - 1;
             var pageSize = rows;
-            //current user
+            //Current user.
 
             using (_context = new WarehouseContext())
             {
-                //getting data for jqgrid from entity
+                //Getting data for jqgrid from entity.
                 var goodsResults = _context.Goods.Select(
                     a => new
                     {
@@ -120,26 +85,30 @@ namespace Webwarehouse.UI.Controllers
                     });
 
 
-                //get total pages and rows quantity
+                //Get total pages and rows quantity.
                 var totalRecords = goodsResults.Count();
                 var totalPages = (int) Math.Ceiling(totalRecords/(float) rows);
 
-                //choose parameter to sort, sorting
+                //Choose parameter to sort, sorting rows.
                 switch (sidx)
                 {
                     case "Price":
+                        //Descending sort.
                         if (sord.ToUpper() == "DESC")
                         {
+                            //Sorting rows.
                             goodsResults = goodsResults.OrderByDescending(s => s.Price);
+                            //Getting rows for current page.
                             goodsResults = goodsResults.Skip(pageIndex*pageSize).Take(pageSize);
                         }
+                        //Ascending sort.
                         else
                         {
                             goodsResults = goodsResults.OrderBy(s => s.Price);
                             goodsResults = goodsResults.Skip(pageIndex*pageSize).Take(pageSize);
                         }
                         break;
-
+                        //By good name
                     default:
                         if (sord.ToUpper() == "DESC")
                         {
@@ -155,7 +124,7 @@ namespace Webwarehouse.UI.Controllers
                 }
 
 
-                //creating data to return to jqgrid
+                //Creating data to return to jqgrid.
                 var jsonData = new
                 {
                     total = totalPages,
@@ -164,38 +133,39 @@ namespace Webwarehouse.UI.Controllers
                     rows = goodsResults.ToList()
                 };
 
-                //returning data to  jqgrid by get method
+                //Returning data to  jqgrid by get method.
                 return Json(jsonData, JsonRequestBehavior.AllowGet);
             }
         }
 
         /// <summary>
-        /// Creating of new good.
+        /// Creating new good.
         /// </summary>
         /// <param name="objGood">New good's data, excluding it's id</param>
-        /// <returns>Operation is or not successful message</returns>
+        /// <returns>Operation is or not successful message.</returns>
         [HttpPost]
         public string Create([Bind(Exclude = "GoodId")] Good objGood)
         {
-            //Summary message - alert in Layout
+            //Summary message - alert in Layout.
             string msg;
             try
             {
-                //validation
+                //Add good's data validation..
                 if (ModelState.IsValid)
                 {
-                    //check if we have this good
-                    if (!_goodMananager.AlreadyHaveGood(objGood.GoodName))
+                    //Check if we have this good.
+                    if (!_goodManager.AlreadyHaveGood(objGood.GoodName))
                     {
-                        _goodMananager.AddGood(objGood);
+                        _goodManager.AddGood(objGood);
                         msg = "Good was saved";
                     }
-                    //already have this good
+                    //Already have this good.
                     else
                     {
                         msg = "already have this good";
                     }
                 }
+                //Don't pass validation.
                 else
                 {
                     msg = "Wrong good's data";
@@ -209,22 +179,22 @@ namespace Webwarehouse.UI.Controllers
         }
 
         /// <summary>
-        /// Editing of existend good
+        /// Editing existend good.
         /// </summary>
         /// <param name="objGood">Editable object</param>
-        /// <returns>Operation is or not successful message</returns>
+        /// <returns>Operation is or not successful message.</returns>
         public string Edit(Good objGood)
         {
             //Returning message.
             string msg;
             try
             {
-                //Goods data validation.
+                //Edit good's data validation.
                 if (ModelState.IsValid)
                 {
                     using (_context = new WarehouseContext())
                     {
-                        //Modifying changed good
+                        //Modifying changed good.
                         _context.Entry(objGood).State = EntityState.Modified;
                         _context.SaveChanges();
                         msg = "Good was changed";
@@ -244,25 +214,35 @@ namespace Webwarehouse.UI.Controllers
         }
 
         /// <summary>
-        /// Deleting of selected  good.
+        /// Deleting selected  good.
         /// </summary>
-        /// <param name="id">selected good id</param>
-        /// <returns></returns>
+        /// <param name="id">Selected good id</param>
+        /// <returns>Operation is or not successful message.</returns>
         public string Delete(int id)
         {
             using (_context=new WarehouseContext())
             { 
                 try
                 {
+                    //Finding selected good.
+                    var goodForDelete = _context.Goods.Find(id);
+
                     //Try to delete selected good.
-                    var todolist = _context.Goods.Find(id);
-                    _context.Goods.Remove(todolist);
-                    _context.SaveChanges();
-                    return "Good was deleted";
+                    if (goodForDelete!=null)
+                    {
+                        _context.Goods.Remove(goodForDelete);
+                        _context.SaveChanges();
+                        return "Good was deleted";
+                    }
+                    //Product wasn't found.
+                    else
+                    {
+                        return "Delete error";
+                    }
                 }
                 catch (Exception)
                 {
-                    //Something go wrong
+                    //Something went wrong.
                     return "Delete error";
                 }
                 

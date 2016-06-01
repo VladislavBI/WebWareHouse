@@ -4,7 +4,7 @@ using Webwarehouse.UI.Models.Concrete;
 namespace Webwarehouse.UI.Infrastructure
 {
     /// <summary>
-    /// Create new database
+    /// Create new database if it not exists.
     /// </summary>
     public class DbWarehouseInitializer : CreateDatabaseIfNotExists<WarehouseContext>
     {

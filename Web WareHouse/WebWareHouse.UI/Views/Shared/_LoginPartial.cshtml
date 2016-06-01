@@ -1,4 +1,6 @@
-﻿@if (Request.IsAuthenticated)
+﻿@* Current user name and log off *@
+
+@if (Request.IsAuthenticated)
 {
     <text>
         Hello, @Html.ActionLink(User.Identity.Name, "Index", "Home", null, new {@class = "username", title = "Manage"})!

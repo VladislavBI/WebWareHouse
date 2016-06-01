@@ -52,3 +52,19 @@
     font: bold 200% serif;
     margin-bottom: 10px;
 }
+
+/*to avoid input left shift*/
+
+/*to container*/
+.container-fix{
+    position:relative;
+}
+
+
+/*to error message*/
+.message-fix{
+    position: absolute;
+    line-height:3;
+    margin-left:3px;
+}
+

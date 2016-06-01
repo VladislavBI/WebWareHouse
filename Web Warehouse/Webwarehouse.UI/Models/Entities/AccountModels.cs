@@ -35,23 +35,23 @@ namespace Webwarehouse.UI.Models.Entities
     public class LoginModel
     {
         /// <summary>
-        /// Users name.
+        /// User's name.
         /// </summary>
         [Required]
         [Display(Name = "User name")]
         public string UserName { get; set; }
 
         /// <summary>
-        /// Users password
+        /// User's password.
         /// </summary>
         [Required]
-        [StringLength(255, ErrorMessage = "Password should contain nit more than {2} characters.", MinimumLength = 3)]
+        [StringLength(255, ErrorMessage = "Password should contain not less than {2} characters.", MinimumLength = 3)]
         [DataType(DataType.Password)]
         [Display(Name = "Password")]
         public string Password { get; set; }
 
         /// <summary>
-        /// Should we remember users session
+        /// Should we remember user's session.
         /// </summary>
         [Display(Name = "Remember me?")]
         public bool RememberMe { get; set; }
@@ -63,14 +63,14 @@ namespace Webwarehouse.UI.Models.Entities
     public class RegisterModel
     {
         /// <summary>
-        /// Users name.
+        /// User's name.
         /// </summary>
         [Required]
         [Display(Name = "User name")]
         public string UserName { get; set; }
 
         /// <summary>
-        /// User's password
+        /// User's password.
         /// </summary>
         [Required]
         [StringLength(255, ErrorMessage = "Password should contain not less than {2} characters.", MinimumLength = 3)]
@@ -79,7 +79,7 @@ namespace Webwarehouse.UI.Models.Entities
         public string Password { get; set; }
 
         /// <summary>
-        /// Conformation of user's password
+        /// Conformation of user's password.
         /// </summary>
         [DataType(DataType.Password)]
         [Display(Name = "Confirm password")]

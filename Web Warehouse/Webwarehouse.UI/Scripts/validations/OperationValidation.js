@@ -1,93 +1,114 @@
-﻿//Adding of new operation validation
+﻿    //Adding of new operation validation (value of operation check).
 
-//User tries send info for server
-$("#operationCreateSubmit").on("click", function (event) {
+    //User tries to send info for server.
+$("#operationCreateSubmit").on("click", function (event)
+{
 
-
-    //cleaning previous errors
+        //Cleaning previous errors.
     $(".qtyerror").remove();
 
-    //checking all textboxes by different rules
-    //if no errors exec next
-    //else - prevent button click
+        //Checking all textboxes by different rules
+        //if no errors on current rull, check next one
+        //else - prevent button click.
 
-    //check that input is filed
+        //Check that inputs are filled
     request();
 
-    //check for characters or punctuation
-    if (noErrors()) {
+        //Check for characters or punctuation.
+    if (noErrors())
+    {
         notString();
     }
 
-    //check for positive number
-    if (noErrors()) {
+        //Check for positive number.
+    if (noErrors())
+    {
         isPositive();
     }
-    //if any error - prevent button click
-    if (!noErrors()) {
+        //If any error - prevent button click.
+    if (!noErrors())
+    {
         event.preventDefault();
     }
+        //If no errors - hide addOperation Partial View..
     else
     {
         addingSuccesseful();
     }
 });
 
-//input is filled
-function request() {
+//Input is filled.
+function request()
+{
 
 
-    if (($("#Quantity").val() == "")) {
+    if (($("#Quantity").val() == ""))
+    {
+        //Adding error message.
         $(this).after("<span class=\"txterror\">Must be filled</span>").css("borderColor", "red");
     }
-        //returning textbox border to normal
+        //Returning textbox border to normal.
     else
     {
         $(this).css("borderColor", "#e2e2e2");
     }
 }
 
-//check that number doesn't contain characters
-function notString() {
+//Check that number doesn't contain characters.
+function notString()
+{
 
     var pattern = /[^0-9-]/;
-    //Checking textbox by pattern
-    if (pattern.test($("#Quantity").val())) {
-        $("#validation-info-anchor").after("<span class=\"qtyerror\">Must be interer number</span>").css("borderColor", "red");
+
+    //Checking textbox by pattern.
+    if (pattern.test($("#Quantity").val()))
+    {
+        //Adding error message.
+        $("#validation-info-anchor").after("<span class=\"qtyerror\">Must be integer number</span>").css("borderColor", "red");
     }
-        //returning textbox border to normal
+
+        //Returning textbox border to normal.
     else
     {
         $(this).css("borderColor", "#e2e2e2");
     }
 }
 
-//check that figure is positive
+//Check that figure is positive.
 function isPositive()
 {
-    if ($("#Quantity").val() <= 0) {
+    if ($("#Quantity").val() <= 0)
+    {
+        //Adding error message.
         $("#validation-info-anchor").after("<span class=\"qtyerror\">Value must be more than 0</span>").css("borderColor", "red");
     }
-        //returning textbox border to normal
-    else {
+        //Returning textbox border to normal.
+    else
+    {
         $(this).css("borderColor", "#e2e2e2");
     }
 }
 
-//checking that it isn't any errors in code - no .qtyerror span
-function noErrors() {
-    if ($("form").find(".qtyerror").val() == null) {
+//Checking that it isn't any errors in code - no .qtyerror span.
+function noErrors()
+{
+    if ($("form").find(".qtyerror").val() == null)
+    {
         return true;
-    } else {
+    }
+
+    else
+    {
         return false;
     }
 
 }
 
 
-//successufuly added
-function addingSuccesseful() {
-    //hiding adding operation
+//Successufuly added
+function addingSuccesseful()
+{
+
+    //hiding adding operation.
     $(".operationEditForm").hide();
-    // $(".good-det-inf").remove();
 }

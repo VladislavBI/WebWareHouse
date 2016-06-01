@@ -1,5 +1,6 @@
-﻿@model Webwarehouse.UI.Models.Entities.LoginModel
+﻿@* View for user to login on page *@
 
+@model Webwarehouse.UI.Models.Entities.LoginModel
 @{
     ViewBag.Title = "Login";
     Layout = "~/Views/Shared/_LayoutLogin.cshtml";
@@ -18,14 +19,16 @@
         @Html.AntiForgeryToken()
         @Html.ValidationSummary(true)
 
+
+            //User's data inputs 
         <fieldset>
             <legend>Log in Form</legend>
             <ol>
-                <li>
+                <li  class="container-fix">
                     <label>User name</label>
                     @Html.TextBoxFor(m => m.UserName, new {@class = "center"})
                 </li>
-                <li>
+                <li  class="container-fix">
                     <label>Password</label>
                     @Html.PasswordFor(m => m.Password)
                 </li>
@@ -36,6 +39,8 @@
             </ol>
             <input type="submit" value="Enter"/>
         </fieldset>
+
+            //Link to registartion page
         <p>
             @Html.ActionLink("Register", "Register"), if you don't have account yet.
         </p>

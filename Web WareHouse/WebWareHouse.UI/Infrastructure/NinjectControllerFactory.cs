@@ -8,15 +8,16 @@ using Webwarehouse.UI.Models.Concrete;
 namespace Webwarehouse.UI.Infrastructure
 {
     /// <summary>
-    /// incrementing of ninject
+    /// Incrementing of Dependecy injection using ninject.
     /// </summary>
     public class NinjectControllerFactory : DefaultControllerFactory
     {
         /// <summary>
-        /// ninject implementor field
+        /// Ninject implementor field.
         /// </summary>
         private readonly IKernel _ninjectKernel;
 
+        //Adding all Dependency injections bindings.
         public NinjectControllerFactory()
         {
             _ninjectKernel = new StandardKernel();
@@ -25,14 +26,14 @@ namespace Webwarehouse.UI.Infrastructure
 
         protected override IController GetControllerInstance(RequestContext requestContext, Type controllerType)
         {
-            // получение объекта контроллера из контейнера
-            // используя его тип
+            // Receiving controller instance
+            //using it's type.
             return controllerType == null ? null : (IController) _ninjectKernel.Get(controllerType);
         }
 
         private void AddBindings()
         {
-            //for base operations at goods - working with entity framework
+            //For base operations at goods - working with Entity Framework.
             _ninjectKernel.Bind<IGoodManager>().To<EfGoodManager>();
         }
     }

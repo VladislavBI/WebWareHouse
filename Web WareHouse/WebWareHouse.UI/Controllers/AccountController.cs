@@ -23,7 +23,7 @@ namespace Webwarehouse.UI.Controllers
         /// <summary>
         /// Open login view.
         /// </summary>
-        /// <param name="returnUrl"></param>
+        /// <param name="returnUrl">Income url</param>
         /// <returns>Login view</returns>
         [AllowAnonymous]
         public ActionResult Login(string returnUrl)
@@ -36,8 +36,8 @@ namespace Webwarehouse.UI.Controllers
         ///  Try to login to site.
         /// </summary>
         /// <param name="model">User's login data</param>
-        /// <param name="returnUrl"></param>
-        /// <returns>Main window of the programm</returns>
+        /// <param name="returnUrl">Income url</param>
+        /// <returns>Main window of the programm with current user or logn view with error</returns>
         [HttpPost]
         [AllowAnonymous]
         [ValidateAntiForgeryToken]

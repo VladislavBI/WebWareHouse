@@ -16,6 +16,7 @@ namespace Webwarehouse.UI
         protected void Application_Start()
         {
             AreaRegistration.RegisterAllAreas();
+                //Initialize new database if not exist.
             Database.SetInitializer(new DbWarehouseInitializer());
 
             WebApiConfig.Register(GlobalConfiguration.Configuration);
@@ -23,6 +24,7 @@ namespace Webwarehouse.UI
             RouteConfig.RegisterRoutes(RouteTable.Routes);
             BundleConfig.RegisterBundles(BundleTable.Bundles);
 
+                //Adding dependency injection with ninject.
             ControllerBuilder.Current.SetControllerFactory(new NinjectControllerFactory());
             AuthConfig.RegisterAuth();
         }

@@ -1,4 +1,6 @@
-﻿@model Webwarehouse.UI.Models.Entities.RegisterModel
+﻿@* View for user to register on page *@
+
+@model Webwarehouse.UI.Models.Entities.RegisterModel
 @{
     ViewBag.Title = "Registration";
     Layout = "~/Views/Shared/_LayoutLogin.cshtml";
@@ -13,23 +15,26 @@
         @Html.AntiForgeryToken()
         @Html.ValidationSummary()
 
+            //User's data inputs 
         <fieldset>
             <legend>Registration Form</legend>
             <ol>
-                <li>
+                <li class="container-fix">
                     <label>User name</label>
                     @Html.TextBoxFor(m => m.UserName)
                 </li>
-                <li>
+                <li  class="container-fix">
                     <label>Password</label>
                     @Html.PasswordFor(m => m.Password)
                 </li>
-                <li>
+                <li  class="container-fix">
                     <label>Confirm password</label>
                     @Html.PasswordFor(m => m.ConfirmPassword)
                 </li>
             </ol>
             <input type="submit" value="Registration"/>
+
+                @*Link to login window*@
             @Html.ActionLink("Return", "Login") to login.
         </fieldset>
     }

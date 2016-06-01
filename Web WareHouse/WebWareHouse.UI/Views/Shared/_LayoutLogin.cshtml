@@ -11,16 +11,14 @@
 
 </head>
 <body>
-
-<header>
-    <div class="content-wrapper">
-        <div class="float-left">
-            <p class="site-title">@Html.ActionLink("your logo here", "Index", "Home")</p>
+    <header>
+        <div class="content-wrapper">
+            @* Site logo html helper *@
+            @Html.CreateLogo("WWHouse")
         </div>
-
-    </div>
 </header>
 
+    @* Main section - inputs to fill *@
 <div id="body">
     @RenderSection("featured", false)
     <section class="content-wrapper main-content clear-fix">
@@ -29,6 +27,7 @@
         </center>
     </section>
 </div>
+
 @*<footer id="site-footer">
         <div class="content-wrapper">
             <div>

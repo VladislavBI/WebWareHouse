@@ -1,17 +1,21 @@
-﻿@model String
+﻿@* Partial View for operatios for selected good jqgrid, get good's name*@
 
+@model String
 @{
     Layout = "~/Views/Shared/_LayoutStatistic.cshtml";
 }
 
 <div class="static-window">
+        @* Goods name *@
     <div class="header-create">@Model</div>
+
+        @* Jqgrid placeholder *@
     <table id="GridTable"></table>
     <div id="pager"></div>
     
 </div>
 <div>
-    Return to @Html.ActionLink("main page", "Index", "Home") 
+    Return to @Html.ActionLink("Main page", "Index", "Home") 
 </div>
 
 

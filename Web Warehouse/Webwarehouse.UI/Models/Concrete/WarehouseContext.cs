@@ -4,7 +4,7 @@ using Webwarehouse.UI.Models.Entities;
 namespace Webwarehouse.UI.Models.Concrete
 {
     /// <summary>
-    /// Warehouse database context
+    /// Warehouse database context.
     /// </summary>
     public class WarehouseContext : DbContext
     {
@@ -14,17 +14,17 @@ namespace Webwarehouse.UI.Models.Concrete
         }
 
         /// <summary>
-        /// list of goods
+        /// List of goods.
         /// </summary>
         public DbSet<Good> Goods { get; set; }
 
         /// <summary>
-        /// list of operations
+        /// List of operations.
         /// </summary>
         public DbSet<Operation> Operations { get; set; }
 
         /// <summary>
-        /// list of users
+        /// List of users.
         /// </summary>
         public DbSet<UserProfile> UserProfiles { get; set; }
     }

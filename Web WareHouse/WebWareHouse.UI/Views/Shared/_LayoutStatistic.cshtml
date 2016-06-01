@@ -22,9 +22,10 @@
 <body>
 <header>
     <div class="content-wrapper">
-        <div class="float-left">
-            <p class="site-title">@Html.ActionLink("your logo here", "Index", "Home")</p>
-        </div>
+           @* Site logo html helper *@
+        @Html.CreateLogo("WWHouse")
+
+        @* Current user name and log off *@
         <div class="float-right">
             <section id="login">
                 @Html.Partial("_LoginPartial")
@@ -37,10 +38,12 @@
         </div>
     </div>
 </header>
+    @* Page  main section *@
 <section class="content-wrapper main-content clear-fix">
     @RenderBody()
 </section>
     <script src="~/Scripts/JQGridOperations.js"></script>
+
 @Html.CreateFooter(@DateTime.Now.Year + " - Web Warehouse")
 
 

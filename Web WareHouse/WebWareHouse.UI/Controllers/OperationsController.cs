@@ -10,25 +10,25 @@ namespace Webwarehouse.UI.Controllers
     public class OperationsController : Controller
     {
         /// <summary>
-        ///     database connection context
+        ///  Database connection context.
         /// </summary>
         private WarehouseContext _context;
 
         /// <summary>
-        /// Get operationAdd view for selected good
+        /// Get operationAdd view for selected good.
         /// </summary>
-        /// <param name="idValue">selected good's id</param>
-        /// <returns></returns>
+        /// <param name="idValue">Selected good's id.</param>
+        /// <returns>addOperation view in current window</returns>
         public ActionResult AddOperation(int idValue)
         {
             
-            //getting instance of current good from database
+            //Getting instance of current good from database.
             Good goodTemp ;
             using (_context = new WarehouseContext())
             {
                     goodTemp = _context.Goods.FirstOrDefault(x => x.GoodId == idValue);
             }
-            //if good exist
+            //If good exist.
             if (goodTemp != null)
             {
                
@@ -42,20 +42,20 @@ namespace Webwarehouse.UI.Controllers
         }
 
         /// <summary>
-        /// Creating new operation for good
-        /// PS: addOpearion view hides in OperationValidation.js
+        /// Creating new operation for good.
+        /// PS: addOpearion view hiding realized in OperationValidation.js. 
         /// </summary>
         /// <param name="newOperation">Created operation</param>
         /// <param name="idValue">Operation's good id</param>
-        /// <returns>refreshes id window</returns>
+        /// <returns>Refreshes id window</returns>
         [HttpPost]
         public ActionResult AddOperation(Operation newOperation, int idValue)
         {
-            //Setting cur date and good for operation
+            //Setting cur date and good for operation.
             newOperation.OperationTime = DateTime.Now;
             newOperation.GoodId = idValue;
 
-            //check for enough good at warehouse
+            //Check for enough good at warehouse.
             if (newOperation.OperType == OperationType.Outcome && !GoodEnought(newOperation.GoodId, newOperation.Quantity))
             {
                 TempData["opMessage"] = "You haven't got enough good";
@@ -65,19 +65,19 @@ namespace Webwarehouse.UI.Controllers
                 
                 using (_context = new WarehouseContext())
                 {
-                    //Setting user for operation
+                    //Setting user for operation.
                     var uId = Convert.ToInt32(Session["UserId"]);
                     var us = _context.UserProfiles.FirstOrDefault(x => x.UserId == uId);
                     newOperation.User = us;
 
-                    //save operation
+                    //Save operation.
                     _context.Operations.Add(newOperation);
                     _context.SaveChanges();
                     TempData["opMessage"] = "Operation successfully saved";
                 }
             }
 
-            //refreshing detailinfo partial view
+            //Refreshing detailinfo partial view.
             var gStat = new GoodStatisticViewModel(newOperation.GoodId);
             return PartialView("~/Views/Goods/DetailInfo.cshtml", gStat);
         }
@@ -86,14 +86,14 @@ namespace Webwarehouse.UI.Controllers
         /// Get the list of operation for selected good.
         /// </summary>
         /// <param name="IdValue">selected goods id value, -1 f nothing were sent</param>
-        /// <returns>Seperate window with operations list 
-        /// and operations list's good name</returns>
+        /// <returns>Separate window with operations list 
+        /// and operations list's associated  good name</returns>
         public ActionResult GetOperationsList(int IdValue=-1)
         {
-            //save of cuurent 
+            //Save associated good's id.
             Session["curGoodId"] = IdValue;
 
-            //Getting name from db by id
+            //Getting good name from db by id.
             using (_context=new WarehouseContext())
             {
                 
@@ -105,39 +105,33 @@ namespace Webwarehouse.UI.Controllers
         /// <summary>
         /// Creating operating list for jqgrid, their ensuing sorting.
         /// </summary>
-        /// <param name="sidx">Sorting row name</param>
-        /// <param name="sord">Asc or desc</param>
-        /// <param name="page">page number</param>
-        /// <param name="rows">number of rows on page</param>
-        /// <param name="GoodId">id of operations list's good</param>
-        /// <returns>data for jqgrid</returns>
-        public JsonResult OperationsList(string sidx, string sord, int page, int rows) //Gets the todo Lists.
+        /// <param name="sidx">Sorted column name</param>
+        /// <param name="sord">Sorting direction: ASC or DESC</param>
+        /// <param name="page">Current page number</param>
+        /// <param name="rows">Number of rows on page</param>
+        /// <returns>Data for jqgrid</returns>
+        public JsonResult OperationsList(string sidx, string sord, int page, int rows) 
         {
-            //getting jqgrid pages data
+            //Getting jqgrid pages data.
             var pageIndex = Convert.ToInt32(page) - 1;
             var pageSize = rows;
 
-            //current good id for EF query
+            //Current good id for EF query.
             int goodId;
-            //checking if session["curGoodId"] have int value
+            //Checking if session["curGoodId"] has int value.
             try
             {
                 goodId = Convert.ToInt32(Session["curGoodId"]);
             }
-            //if not - assigning nonexistent id value
+            //If hasn't - assigning nonexistent id value.
             catch (Exception)
             {
                 goodId = -1;
             }
 
-           
-
-
-              
-
             using (_context = new WarehouseContext())
             {
-                //getting data for jqgrid from entity
+                //Getting data for jqgrid from entity.
                 var operationResults = _context.Operations.Where(x => x.GoodId == goodId).Select(
                 a => new
                 {
@@ -148,24 +142,24 @@ namespace Webwarehouse.UI.Controllers
                     a.OperationTime
                 });
 
-                //get total pages and rows quantity
+                //Get total pages and rows quantity.
                 var totalRecords = operationResults.Count();
                 var totalPages = (int) Math.Ceiling(totalRecords/(float) rows);
 
 
-                //choose parameter to sort, sorting
+                //Choose parameter to sort, sorting rows.
                 switch (sidx)
                 {
                     case "UserName":
-                        //descending sort
+                        //Descending sort.
                         if (sord.ToUpper() == "DESC")
                         {
-                            //ordering
+                            //Sorting rows.
                             operationResults = operationResults.OrderByDescending(s => s.UserName);
-                            //getting rows for current page
+                            //Getting rows for current page.
                             operationResults = operationResults.Skip(pageIndex*pageSize).Take(pageSize);
                         }
-                        //ascending sort
+                        //Ascending sort.
                         else
                         {
                             operationResults = operationResults.OrderBy(s => s.UserName);
@@ -199,7 +193,7 @@ namespace Webwarehouse.UI.Controllers
                             operationResults = operationResults.Skip(pageIndex*pageSize).Take(pageSize);
                         }
                         break;
-
+                        //By date of operaton
                     default:
                         if (sord.ToUpper() == "DESC")
                         {
@@ -215,7 +209,7 @@ namespace Webwarehouse.UI.Controllers
                 }
 
 
-                //data to return at jqgrid
+                //Data to return at jqgrid.
                 var jsonData = new
                 {
                     total = totalPages,
@@ -228,36 +222,37 @@ namespace Webwarehouse.UI.Controllers
         }
 
         /// <summary>
-        /// Check that ther is enough of selected good at warehouse.
+        /// Check that there are enough selected good at warehouse.
         /// </summary>
         /// <param name="goodId">Selected good's id</param>
-        /// <param name="transactionValue">Value of certain transaction</param>
-        /// <returns></returns>
-        private bool GoodEnought(int goodId, int transactionValue)
+        /// <param name="operationValue">Value of certain operation.</param>
+        /// <returns>Do you have enough goods on stock for operation (true - yes, have)</returns>
+        private bool GoodEnought(int goodId, int operationValue)
         {
-            //remnants of stock
+            //Remnants of stock.
             var remnants = 0;
             
-            //calculation of remnants on certain goods
+            //Calculation of remnants on certain goods.
             using (_context = new WarehouseContext())
             {
-                //incomes(plus)
+                //Incomes(sum plus).
                 if (_context.Operations.Any(x => x.GoodId == goodId && x.OperType == OperationType.Income))
                     remnants =
                         _context.Operations.Where(x => x.GoodId == goodId && x.OperType == OperationType.Income)
                             .Select(z => z.Quantity)
                             .Sum();
-                //outcomes(minus)
+                //Outcomes(sum minus).
                 if (_context.Operations.Any(x => x.GoodId == goodId && x.OperType == OperationType.Outcome))
                     remnants -=
                         _context.Operations.Where(x => x.GoodId == goodId && x.OperType == OperationType.Outcome)
                             .Select(z => z.Quantity)
                             .Sum();
             }
-            //check that ramnants are more than transaction value
-            if ((remnants - transactionValue) >= 0)
+            //Check that remnants are more than operation value.
+            if ((remnants - operationValue) >= 0)
                 return true;
-            //not enough
+
+            //Not enough.
             return false;
         }
     }
