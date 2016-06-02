@@ -1,36 +1,40 @@
-﻿using Ninject;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
+﻿using System;
 using System.Web.Mvc;
-using Webwarehouse.Model.Abstract;
-using Webwarehouse.Model.Concrete;
+using System.Web.Routing;
+using Ninject;
+using Webwarehouse.UI.Models.Abstract;
+using Webwarehouse.UI.Models.Concrete;
 
 namespace Webwarehouse.UI.Infrastructure
 {
-    public class NinjectControllerFactory: DefaultControllerFactory
+    /// <summary>
+    /// Incrementing of Dependecy injection using ninject.
+    /// </summary>
+    public class NinjectControllerFactory : DefaultControllerFactory
     {
-        IKernel ninjectKernel;
+        /// <summary>
+        /// Ninject implementor field.
+        /// </summary>
+        private readonly IKernel _ninjectKernel;
 
+        //Adding all Dependency injections bindings.
         public NinjectControllerFactory()
         {
-            ninjectKernel = new StandardKernel();
+            _ninjectKernel = new StandardKernel();
             AddBindings();
         }
 
-        protected override IController GetControllerInstance(System.Web.Routing.RequestContext requestContext, Type controllerType)
+        protected override IController GetControllerInstance(RequestContext requestContext, Type controllerType)
         {
-            // получение объекта контроллера из контейнера
-            // используя его тип
-            return controllerType == null ? null : (IController)ninjectKernel.Get(controllerType);
-            
+            // Receiving controller instance
+            //using it's type.
+            return controllerType == null ? null : (IController) _ninjectKernel.Get(controllerType);
         }
 
-        void AddBindings()
+        private void AddBindings()
         {
-            ninjectKernel.Bind<IGoodsManager>().To<EFGoodsManager>();
+            //For base operations at goods - working with Entity Framework.
+            _ninjectKernel.Bind<IGoodManager>().To<EfGoodManager>();
         }
     }
-
 }

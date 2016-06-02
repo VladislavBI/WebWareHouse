@@ -1,197 +1,259 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Web;
 using System.Web.Mvc;
-using Webwarehouse.Model.Concrete;
-using Webwarehouse.Model.Entities;
 using Webwarehouse.UI.Models;
+using Webwarehouse.UI.Models.Concrete;
+using Webwarehouse.UI.Models.Entities;
 
 namespace Webwarehouse.UI.Controllers
 {
     public class OperationsController : Controller
     {
-        WarehouseContext cont = new WarehouseContext();
-        
-        public ActionResult Add(object idVal)
+        /// <summary>
+        ///  Database connection context.
+        /// </summary>
+        private WarehouseContext _context;
+
+        /// <summary>
+        /// Get operationAdd view for selected good.
+        /// </summary>
+        /// <param name="idValue">Selected good's id.</param>
+        /// <returns>addOperation view in current window</returns>
+        public ActionResult AddOperation(int idValue)
         {
-            int id;
-            try
-            {
-                string[] a = (string[])idVal;
-                id = Convert.ToInt32(a[0]);
-            }
-            catch (Exception)
-            {
-                    return PartialView(new Operation());
-            }
-           
             
-            Good g;
-            using (cont = new WarehouseContext())
+            //Getting instance of current good from database.
+            Good goodTemp ;
+            using (_context = new WarehouseContext())
             {
-                g = cont.Goods.FirstOrDefault(x => x.GoodId == id);
+                    goodTemp = _context.Goods.FirstOrDefault(x => x.GoodId == idValue);
             }
-            TempData["goodId"] = g.GoodId;
-            Operation op = new Operation() { GoodAttached = g };
-            return PartialView(op);
-        }
-        [HttpPost]
-        public ActionResult Add(Operation op, int idVal)
-        {
-            op.OperationTime = DateTime.Now;
-            op.GoodId = idVal;
-             if (op.OperType==OperationType.Outcome&&!GoodEnought(op.GoodId, op.Quantity))
-                {
-                    TempData["opMessage"]= "You haven't got enough product";
-                }
-             else
-	            {
-                using (cont = new WarehouseContext())
-                {
-                    int uId = Convert.ToInt32(Session["UserId"]);
-                    UserProfile us = cont.UserProfiles.FirstOrDefault(x => x.UserId == uId);
-                    op.User = us;
-                    cont.Operations.Add(op);
-                    cont.SaveChanges();
-                    TempData["opMessage"] = "Product successfully saved";
-                }
-	        }
-
-            GoodStatisticViewModel gStat= new GoodStatisticViewModel(op.GoodId);
-            return PartialView("~/Views/Goods/DetailInfo.cshtml", gStat);
-        }
-
-        public ActionResult GetOperationsList(int idVal)
-        {
-            Session["curGood"] = idVal;
-            return View();
+            //If good exist.
+            if (goodTemp != null)
+            {
+               
+                var op = new Operation { GoodAttached = goodTemp };
+                return PartialView(op);
+            }
+            else
+            {
+                return PartialView(new Operation());
+            }
         }
 
         /// <summary>
-        /// Creating operating list for jqgrid, their insuing sorting
+        /// Creating new operation for good.
+        /// PS: addOpearion view hiding realized in OperationValidation.js. 
         /// </summary>
-        /// <param name="sidx">Sorting row name</param>
-        /// <param name="sord">Asc or desc</param>
-        /// <param name="page">page number</param>
-        /// <param name="rows">number of rows on page</param>
-        /// <returns>data for jqgrid</returns>
-        public JsonResult OperationsList(string sidx, string sord, int page, int rows)  //Gets the todo Lists.
+        /// <param name="newOperation">Created operation</param>
+        /// <param name="idValue">Operation's good id</param>
+        /// <returns>Refreshes id window</returns>
+        [HttpPost]
+        public ActionResult AddOperation(Operation newOperation, int idValue)
         {
-            //getting jqgrid pages data
-            int pageIndex = Convert.ToInt32(page) - 1;
-            int pageSize = rows;
-            //current good
-            int gId = Convert.ToInt32(Session["curGood"]);
-            //current user
-            int uId = Convert.ToInt32(Session["UserId"]);
-            string OperType = "";
+            //Setting cur date and good for operation.
+            newOperation.OperationTime = DateTime.Now;
+            newOperation.GoodId = idValue;
 
-            //getting data for jqgrid from entity
-            var operationResults = cont.Operations.Where(x => x.GoodId == gId).Select(
-                  a => new
-                  {
-                      a.OperationId,
-                      a.User.UserName,
-                      OperType = a.OperType == OperationType.Income ? "Income" : "Outcome",
-                      a.Quantity,
-                      a.OperationTime
-                  });
-
-            //get total pages and rows quantity
-            int totalRecords = operationResults.Count();
-            var totalPages = (int)Math.Ceiling((float)totalRecords / (float)rows);
-
-
-            //choose parameter to sort, sorting
-            switch (sidx)
+            //Check for enough good at warehouse.
+            if (newOperation.OperType == OperationType.Outcome && !GoodEnought(newOperation.GoodId, newOperation.Quantity))
             {
-                case "UserName":
-                    //descending sort
-                    if (sord.ToUpper() == "DESC")
-                    {
-                        //ordering
-                        operationResults = operationResults.OrderByDescending(s => s.UserName);
-                        //getting rows for current page
-                        operationResults = operationResults.Skip(pageIndex * pageSize).Take(pageSize);
-                    }
-                    //ascending sort
-                    else
-                    {
-                        operationResults = operationResults.OrderBy(s => s.UserName);
-                        operationResults = operationResults.Skip(pageIndex * pageSize).Take(pageSize);
-                    }
-                    break;
+                TempData["opMessage"] = "You haven't got enough good";
+            }
+            else
+            {
+                
+                using (_context = new WarehouseContext())
+                {
+                    //Setting user for operation.
+                    var uId = Convert.ToInt32(Session["UserId"]);
+                    var us = _context.UserProfiles.FirstOrDefault(x => x.UserId == uId);
+                    newOperation.User = us;
 
-                case "Quantity":
-
-                    if (sord.ToUpper() == "DESC")
-                    {
-                        operationResults = operationResults.OrderByDescending(s => s.Quantity);
-                        operationResults = operationResults.Skip(pageIndex * pageSize).Take(pageSize);
-                    }
-                    else
-                    {
-                        operationResults = operationResults.OrderBy(s => s.Quantity);
-                        operationResults = operationResults.Skip(pageIndex * pageSize).Take(pageSize);
-                    }
-                    break;
-
-                    case "OperType":
-                    if (sord.ToUpper() == "DESC")
-                    {   
-                        operationResults = operationResults.OrderByDescending(s => s.OperType);
-                        operationResults = operationResults.Skip(pageIndex * pageSize).Take(pageSize);
-                    }
-                    else
-                    {
-                        operationResults = operationResults.OrderBy(s => s.OperType);
-                        operationResults = operationResults.Skip(pageIndex * pageSize).Take(pageSize);
-                    }
-                    break;
-
-                default:
-                    if (sord.ToUpper() == "DESC")
-                    {
-                        operationResults = operationResults.OrderByDescending(s => s.OperationTime);
-                        operationResults = operationResults.Skip(pageIndex * pageSize).Take(pageSize);
-                    }
-                    else
-                    {
-                        operationResults = operationResults.OrderBy(s => s.OperationTime);
-                        operationResults = operationResults.Skip(pageIndex * pageSize).Take(pageSize);
-                    }
-                    break;
+                    //Save operation.
+                    _context.Operations.Add(newOperation);
+                    _context.SaveChanges();
+                    TempData["opMessage"] = "Operation successfully saved";
+                }
             }
 
-
-            
-
-            var jsonData = new
-            {
-                total = totalPages,
-                page,
-                records = totalRecords,
-                rows = operationResults
-            };
-            return Json(jsonData, JsonRequestBehavior.AllowGet);
+            //Refreshing detailinfo partial view.
+            var gStat = new GoodStatisticViewModel(newOperation.GoodId);
+            return PartialView("~/Views/Goods/DetailInfo.cshtml", gStat);
         }
 
-
-        bool GoodEnought(int goodId, int opQty)
+        /// <summary>
+        /// Get the list of operation for selected good.
+        /// </summary>
+        /// <param name="IdValue">selected goods id value, -1 f nothing were sent</param>
+        /// <returns>Separate window with operations list 
+        /// and operations list's associated  good name</returns>
+        public ActionResult GetOperationsList(int IdValue=-1)
         {
-            int left = 0;
-            using (cont = new WarehouseContext())
+            //Save associated good's id.
+            Session["curGoodId"] = IdValue;
+
+            //Getting good name from db by id.
+            using (_context=new WarehouseContext())
             {
-                if (cont.Operations.Where(x => x.GoodId == goodId && x.OperType == OperationType.Income).Any())
-                left = cont.Operations.Where(x => x.GoodId == goodId&&x.OperType==OperationType.Income).Select(z => z.Quantity).Sum();
-                if (cont.Operations.Where(x => x.GoodId == goodId && x.OperType == OperationType.Outcome).Any())
-                left -= cont.Operations.Where(x => x.GoodId == goodId && x.OperType == OperationType.Outcome).Select(z => z.Quantity).Sum();
+                
+                var tempName = _context.Goods.FirstOrDefault(x => x.GoodId == IdValue).GoodName;
+                return View(null, null, tempName);
             }
-            if ((left-opQty) >= 0)
+        }
+
+        /// <summary>
+        /// Creating operating list for jqgrid, their ensuing sorting.
+        /// </summary>
+        /// <param name="sidx">Sorted column name</param>
+        /// <param name="sord">Sorting direction: ASC or DESC</param>
+        /// <param name="page">Current page number</param>
+        /// <param name="rows">Number of rows on page</param>
+        /// <returns>Data for jqgrid</returns>
+        public JsonResult OperationsList(string sidx, string sord, int page, int rows) 
+        {
+            //Getting jqgrid pages data.
+            var pageIndex = Convert.ToInt32(page) - 1;
+            var pageSize = rows;
+
+            //Current good id for EF query.
+            int goodId;
+            //Checking if session["curGoodId"] has int value.
+            try
+            {
+                goodId = Convert.ToInt32(Session["curGoodId"]);
+            }
+            //If hasn't - assigning nonexistent id value.
+            catch (Exception)
+            {
+                goodId = -1;
+            }
+
+            using (_context = new WarehouseContext())
+            {
+                //Getting data for jqgrid from entity.
+                var operationResults = _context.Operations.Where(x => x.GoodId == goodId).Select(
+                a => new
+                {
+                    a.OperationId,
+                    a.User.UserName,
+                    OperType = a.OperType == OperationType.Income ? "Income" : "Outcome",
+                    a.Quantity,
+                    a.OperationTime
+                });
+
+                //Get total pages and rows quantity.
+                var totalRecords = operationResults.Count();
+                var totalPages = (int) Math.Ceiling(totalRecords/(float) rows);
+
+
+                //Choose parameter to sort, sorting rows.
+                switch (sidx)
+                {
+                    case "UserName":
+                        //Descending sort.
+                        if (sord.ToUpper() == "DESC")
+                        {
+                            //Sorting rows.
+                            operationResults = operationResults.OrderByDescending(s => s.UserName);
+                            //Getting rows for current page.
+                            operationResults = operationResults.Skip(pageIndex*pageSize).Take(pageSize);
+                        }
+                        //Ascending sort.
+                        else
+                        {
+                            operationResults = operationResults.OrderBy(s => s.UserName);
+                            operationResults = operationResults.Skip(pageIndex*pageSize).Take(pageSize);
+                        }
+                        break;
+
+                    case "Quantity":
+
+                        if (sord.ToUpper() == "DESC")
+                        {
+                            operationResults = operationResults.OrderByDescending(s => s.Quantity);
+                            operationResults = operationResults.Skip(pageIndex*pageSize).Take(pageSize);
+                        }
+                        else
+                        {
+                            operationResults = operationResults.OrderBy(s => s.Quantity);
+                            operationResults = operationResults.Skip(pageIndex*pageSize).Take(pageSize);
+                        }
+                        break;
+
+                    case "OperType":
+                        if (sord.ToUpper() == "DESC")
+                        {
+                            operationResults = operationResults.OrderByDescending(s => s.OperType);
+                            operationResults = operationResults.Skip(pageIndex*pageSize).Take(pageSize);
+                        }
+                        else
+                        {
+                            operationResults = operationResults.OrderBy(s => s.OperType);
+                            operationResults = operationResults.Skip(pageIndex*pageSize).Take(pageSize);
+                        }
+                        break;
+                        //By date of operaton
+                    default:
+                        if (sord.ToUpper() == "DESC")
+                        {
+                            operationResults = operationResults.OrderByDescending(s => s.OperationTime);
+                            operationResults = operationResults.Skip(pageIndex*pageSize).Take(pageSize);
+                        }
+                        else
+                        {
+                            operationResults = operationResults.OrderBy(s => s.OperationTime);
+                            operationResults = operationResults.Skip(pageIndex*pageSize).Take(pageSize);
+                        }
+                        break;
+                }
+
+
+                //Data to return at jqgrid.
+                var jsonData = new
+                {
+                    total = totalPages,
+                    page,
+                    records = totalRecords,
+                    rows = operationResults.ToList()
+                };
+                return Json(jsonData, JsonRequestBehavior.AllowGet);
+            }
+        }
+
+        /// <summary>
+        /// Check that there are enough selected good at warehouse.
+        /// </summary>
+        /// <param name="goodId">Selected good's id</param>
+        /// <param name="operationValue">Value of certain operation.</param>
+        /// <returns>Do you have enough goods on stock for operation (true - yes, have)</returns>
+        private bool GoodEnought(int goodId, int operationValue)
+        {
+            //Remnants of stock.
+            var remnants = 0;
+            
+            //Calculation of remnants on certain goods.
+            using (_context = new WarehouseContext())
+            {
+                //Incomes(sum plus).
+                if (_context.Operations.Any(x => x.GoodId == goodId && x.OperType == OperationType.Income))
+                    remnants =
+                        _context.Operations.Where(x => x.GoodId == goodId && x.OperType == OperationType.Income)
+                            .Select(z => z.Quantity)
+                            .Sum();
+                //Outcomes(sum minus).
+                if (_context.Operations.Any(x => x.GoodId == goodId && x.OperType == OperationType.Outcome))
+                    remnants -=
+                        _context.Operations.Where(x => x.GoodId == goodId && x.OperType == OperationType.Outcome)
+                            .Select(z => z.Quantity)
+                            .Sum();
+            }
+            //Check that remnants are more than operation value.
+            if ((remnants - operationValue) >= 0)
                 return true;
-            else
-                return false;
+
+            //Not enough.
+            return false;
         }
     }
 }

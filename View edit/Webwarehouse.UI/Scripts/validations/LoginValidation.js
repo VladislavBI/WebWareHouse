@@ -1,130 +1,183 @@
-﻿
-$(":submit").on("click", function (event) {
+﻿    //Validation of login and register views.
+
+    //User tries to confirm his info.
+$(":submit").on("click", function (event)
+{
 
 
-    //cleaning previous errors
+        //Cleaning previous errors.
     $(".txterror").remove();
     $(".pswerror").remove();
 
-    //checking all textboxes by dif rulles
-    //if no errors exec next
-    //else - prevent button click
+        //Checking all textboxes by different rulles
+        //if no errors on current rull, check next one
+        //else - prevent button click.
+
+        //Check that inputs are filled
     request();
 
-    //checking tagslike text in inputs
+        //Checking "tagslike" text in inputs.
     if (noErrors()) {
         noTag();
     }
-    //checking passwords equality
+        //Checking passwords equality.
     if (noErrors()) {
         EqualPasswords();
     }
-    //checking length of passwords
+        //Checking length of passwords.
     if (noErrors()) {
         LengthCheck();
     }
-    //if any error - prevent button click
+        //If any error - prevent button click.
     if (!noErrors()) {
         event.preventDefault();
     }
 });
 
-//No errors in inputs - no .qtyerror span
-function noErrors() {
+    //No errors in inputs - no .txterror or .pswerror spans.
+function noErrors()
+{
+        //No errors.
     if ($("form").find(".txterror").val() == null && $("form").find(".pswerror").val() == null)
     {
         return true;
     }
+
+        //Have errors.
     else
     {
         return false;
     }
-    
+
 }
 
-//all inputs are filled
-function request() {
-    $(":text").each(function (index, obj) {
-        if (($(this).val() == "")) {
-            $(this).after('<span class="txterror">Must be filled</span>').css("borderColor", "red");
-        }
-        else {
-            $(this).css("border", "none");
-        }
-    });
+    //Check that all inputs are filled.
+function request()
+{
 
-    //checking all passwords
-    $(":password").each(function (index, obj) {
-        if ((($(this).val() == ""))) {
-            $(this).after('<span class="pswerror">Must be filled</span>').css("borderColor", "red");
+        //Checking all textboxes.
+    $(":text").each(function (index, obj)
+    {
+
+        if (($(this).val() == ""))
+        {
+            //Adding error message.
+            $(this).after("<span class=\"txterror message-fix\">Must be filled</span>").css("borderColor", "red");
+
         }
-        else {
-            $(this).css("border", "none");
-        }
-    });
-}
 
-//Inputs don't include tags
-function noTag() {
-        
-
-
-    //patterns
-    var openTag = /<\w*>/;
-    var closetag = /<\w*\/\w*>/
-
-        
-    //checking all textboxes
-    $(":text").each(function (index, obj) {
-        if (openTag.test($(this).val()) || closetag.test($(this).val())) {
-            $(this).after('<span class="txterror">can not be tag</span>').css("borderColor", "red");
-        }
+          //Returning textbox border to normal.
         else
         {
-            $(this).css("border", "none");
+            $(this).css("borderColor", "#e2e2e2");
         }
     });
-
-    //checking all passwords
-    $(":password").each(function (index, obj) {
-        if (openTag.test($(this).val()) || closetag.test($(this).val())) {
-            $(this).after('<span class="pswerror">passsword can not be tag</span>').css("borderColor", "red");
+    
+        //Checking all passwords.
+    $(":password").each(function (index, obj)
+    {
+        if ((($(this).val() == "")))
+        {
+            //Adding error message.
+            $(this).after("<span class=\"pswerror message-fix\">Must be filled</span>").css("borderColor", "red");
         }
-        else {
-            $(this).css("border", "none");
+
+            //Returning textbox border to normal.
+        else
+        {
+            $(this).css("borderColor", "#e2e2e2");
         }
     });
 }
 
-//Passwordboxes text is equal
-function EqualPasswords() {
-    //Creating and filling new arra y by all password boxes instances
+    //Checking that inputs don't include tags.
+function noTag()
+{
+
+
+        //Patterns.
+    var openTag = /<.+>/;
+    var closetag = /<.*\/.+>/;
+
+        //Checking all textboxes.
+    $(":text").each(function (index, obj)
+    {
+             //Adding error message.
+        if (openTag.test($(this).val()) || closetag.test($(this).val()))
+        {
+            $(this).after("<span class=\"txterror message-fix\">Name can't be tag</span>").css("borderColor", "red");
+        }
+
+            //Returning textbox border to normal.
+        else
+        {
+            $(this).css("borderColor", "#e2e2e2");
+        }
+    });
+
+        //Checking all passwords.
+    $(":password").each(function (index, obj)
+    {
+        if (openTag.test($(this).val()) || closetag.test($(this).val()))
+        {
+            //Adding error message.
+            $(this).after("<span class=\"pswerror message-fix\">Passsword can't be tag</span>").css("borderColor", "red");
+        }
+
+            //Returning textbox border to normal.
+        else
+        {
+            $(this).css("borderColor", "#e2e2e2");
+        }
+
+    });
+}
+
+    //Checking that passwords texts are equal to each other.
+function EqualPasswords()
+{
+
+        //Creating and filling new array by texts from passwordboxes.
     var e = new Array();
-    $(":password").each(function (index, obj) {
+    $(":password").each(function (index, obj)
+    {
         e[index] = $(this).val();
     });
 
-    //more than two passwordboxes
-    if (e.length > 1) {
-        //checking for equality
-        if (e[0] != e[1]) {
-            $(":password").after('<span class="pswerror">passwords are not equal</span>').css("borderColor", "red");
+        //If more than one passwordbox
+    if (e.length > 1)
+    {
+
+           //Checking for equality.
+        if (e[0] != e[1])
+        {
+            //Adding error message.
+            $(":password").after("<span class=\"pswerror message-fix\">Passwords are not equal</span>").css("borderColor", "red");
+        }
+            //Returning textbox border to normal.
+        else {
+            $(this).css("borderColor", "#e2e2e2");
         }
     }
 }
 
-//Checking lenght of inputs
-function LengthCheck() {
+    //Checking lenght of inputs 
+    //textboxes don't checked here in case of "request" rule.
+function LengthCheck()
+{
 
-    //checking all passwords
-    $(":password").each(function (index, obj) {
-        if ((($(this).val().length < 3))) {
-            $(this).after('<span class="pswerror">minimum length for password is 3</span>').css("borderColor", "red");
+        //Checking all passwords
+    $(":password").each(function (index, obj)
+    {
+        if ((($(this).val().length < 3)))
+        {
+                //Adding error message.
+            $(this).after("<span class=\"pswerror message-fix\">Minimum length for password is 3</span>").css("borderColor", "red");
         }
-        else {
-            $(this).css("border", "none");
+            //Returning textbox border to normal.
+        else
+        {
+            $(this).css("borderColor", "#e2e2e2");
         }
     });
 }
-
-   

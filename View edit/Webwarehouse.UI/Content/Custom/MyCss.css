@@ -1,77 +1,70 @@
-﻿.HorAlCenter {
-    margin: auto;
-    width: 60%;
-    border: 3px solid #73AD21;
-    padding: 10px;
-}
-.table {
-    display:table
-}
-.tr {
-    display:table-row
-}
-.td {
-    display:table-cell
-}
-.tableF{
-    display:table;
-    width:100%;   
-}
-.bidyToMiddle{
-	display		: table-cell;
-	vertical-align	: middle;
-}
-
-
-#body-no-width {
-    clear: both;
-    padding-bottom: 35px;
-  
-}
-
-#jqgridtd{
-    width:90%;
-}
-#site-footer{
-    
-    background-color: #7ac0da;
-        background-image: -ms-linear-gradient(left, #7ac0da 0%, #a4d4e6 100%);
-        background-image: -o-linear-gradient(left, #7ac0da 0%, #a4d4e6 100%);
-        background-image: -webkit-gradient(linear, left top, right top, color-stop(0, #7ac0da), color-stop(1, #a4d4e6));
-        background-image: -webkit-linear-gradient(left, #7ac0da 0%, #a4d4e6 100%);
-        background-image: linear-gradient(left, #7ac0da 0%, #a4d4e6 100%);
-
-background:none repeat scroll 0 0 #f0f0f0;
-min-height:60px;
-padding:10px;
-margin-top:50px;
-}
-
-.goodDetInfo{
-    width: 85%;
-    text-align: right;
-}
-
-.my-select{
-    width: 82%;
-    height: 30px;
-}
-
-.goodNumber{
-    width: 58%;
-}
-
-.my-header{
-    font-size: 1.8em;
-    margin: 18px;
-}
-
-.static-window{
-        margin-top: 50px;
-}
-
-.fotter-content{
-    position: fixed;
-    bottom: 0;
+﻿/*Create table with div.*/
+.table { display: table }
+/*Table row with div.*/
+.tr { display: table-row }
+/*table cell with div.*/
+.td { display: table-cell }
+/*Create table iframe full body width.*/
+.tableF {
+    display: table;
     width: 100%;
 }
+/*Creating wrapper without mentioned width resticts.*/
+#body-no-width {
+    clear: both;
+    padding-bottom: 35px;  
+}
+
+/*table cell included jqgrid, we need this form jqgrid resize in OperationList*/
+#jqgrid-td { width: 90%; }
+
+/*footer of pages*/
+#site-footer {
+    background-color: none repeat scroll 0 0 #f0f0f0;
+    bottom: 0;
+    margin-right: 10px;
+    margin-top: 50px;
+    position: fixed;
+    width: 2500px;
+}
+
+/*Style for detalized information of good*/
+#good-det-inf {
+    text-align: right;
+    width: 85%;
+}
+/*Select tag normal view*/
+.my-select {
+    height: 30px;
+    width: 82%;
+}
+
+/*Changing width of text input at operation add view*/
+.goodNumber { width: 58%; }
+
+/*Full screen window with mmargin from header*/
+.static-window { margin-top: 50px; }
+
+/*Header tag with div*/
+.header-create{
+    width: 100%;
+    text-align:center;
+    font: bold 200% serif;
+    margin-bottom: 10px;
+}
+
+/*to avoid input left shift*/
+
+/*to container*/
+.container-fix{
+    position:relative;
+}
+
+
+/*to error message*/
+.message-fix{
+    position: absolute;
+    line-height:3;
+    margin-left:3px;
+}
+

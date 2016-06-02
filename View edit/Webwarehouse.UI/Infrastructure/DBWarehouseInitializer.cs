@@ -1,13 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data.Entity;
-using System.Linq;
-using System.Web;
-using Webwarehouse.Model.Concrete;
+﻿using System.Data.Entity;
+using Webwarehouse.UI.Models.Concrete;
 
 namespace Webwarehouse.UI.Infrastructure
 {
-    public class DBWarehouseInitializer : CreateDatabaseIfNotExists<WarehouseContext>
+    /// <summary>
+    /// Create new database if it not exists.
+    /// </summary>
+    public class DbWarehouseInitializer : CreateDatabaseIfNotExists<WarehouseContext>
     {
         protected override void Seed(WarehouseContext context)
         {

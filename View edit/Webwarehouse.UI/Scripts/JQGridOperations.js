@@ -1,31 +1,44 @@
-﻿$(window).resize(function () {
-    var DataGrid = $('#GridTable');
-    //sets the grid size initially
-    DataGrid.jqGrid('setGridWidth', parseInt($("#jqgridtd").width()) - 20);
+﻿    //Resize jqgrid for fitting current window size.
+$(window).resize(function ()
+{
+        //Sets the grid size initially.
+    var dataGrid = $("#GridTable");
+    dataGrid.jqGrid("setGridWidth", parseInt($("body").width()) - 20);
 
-
-    //$(body).height(parseInt($(window).height()));
 });
 
-$(function () {
+$(function ()
+{
     $("#GridTable").jqGrid({
         url: "/Operations/OperationsList",
-        datatype: 'json',
-        mtype: 'Get',
-        colNames: ['OpId', 'Пользователь', 'Тип операции', 'Кол-во', 'Дата'],
+        datatype: "json",
+        mtype: "Get",
+        colNames: ["OpId", "User", "Operation type", "Value", "Date"],
         colModel: [
-            { key: true, hidden: true, name: 'OperationId', index: 'OperationId', editable: false },
-            { key: false, name: 'UserName', index: 'UserName', uName: false, sortable: true },
-            { key: false, name: 'OperType', index: 'OperType', editable: false, sortable: true },
-            { key: false, name: 'Quantity', index: 'Quantity', editable: false, sortable: true },
-            { key: false, name: 'OperationTime', index: 'OperationTime', editable: false, sortable: true, formatter: 'date', formatoptions: { newformat: 'd/m/Y' } }],
-        pager: jQuery('#pager'),
+                //Column for operation's ids.
+            { key: true, hidden: true, name: "OperationId", index: "OperationId", editable: false },
+                //Column for User's, who executed operation, names.
+            { key: false, name: "UserName", index: "UserName", uName: false, sortable: true },
+                //Column for operation's types.
+            { key: false, name: "OperType", index: "OperType", editable: false, sortable: true },
+                //Column for operation's values.
+            { key: false, name: "Quantity", index: "Quantity", editable: false, sortable: true },
+                //Column for operation's execution dates.
+            { key: false, name: "OperationTime", index: "OperationTime", editable: false, sortable: true, formatter: "date", formatoptions: { newformat: "d/m/Y" } }
+        ],
+            //Binding to footer navigation tag. 
+        pager: jQuery("#pager"),
+
+            //Jqgrid properties.
         rowNum: 10,
         rowList: [10, 25, 50, 100],
-        height: '100%',
+        height: "100%",
         viewrecords: true,
-        caption: 'Список операций по товару',
-        emptyrecords: 'No records to display',
+        caption: "Opeartions list",
+        emptyrecords: "No records to display",
+        autowidth: true,
+        multiselect: false,
+            //Information from server.
         jsonReader: {
             root: "rows",
             page: "page",
@@ -34,28 +47,14 @@ $(function () {
             repeatitems: false,
             Id: "0"
         },
-        //to save current page on sorting
-        onSortCol: function (index, columnIndex, sortOrder) {
-            var postpage = jQuery("#GridTable").getGridParam('postData');
+
+            //To save current page on sorting
+        onSortCol: function (index, columnIndex, sortOrder)
+        {
+            var postpage = jQuery("#GridTable").getGridParam("postData");
             jQuery("#GridTable").setGridParam({ page: postpage.page });
         },
-        autowidth: true,
-        multiselect: false,
-        oadComplete: function (data) {
-            var myGrid = $('#GridTable'),
-                selRowId = myGrid.jqGrid('getGridParam', 'selrow'),
-                celValue = myGrid.jqGrid('getCell', selRowId, 'GoodId');
-            $.ajax({
-                url: "/Goods/DetailInfo",
-                type: "GET",
-                data: { id: celValue }
-            })
-            .done(function (partialViewResult) {
-                $("#goodDetInfo").html(partialViewResult);
-                $(".operationEditForm").empty();
-            });
-        },
        
-    }).navGrid('#pager', { edit: false, add: false, del: false, search: false, refresh: false });
+        //Disabling CRUD operations for grid.
+    }).navGrid("#pager", { edit: false, add: false, del: false, search: false, refresh: false });
 });
-

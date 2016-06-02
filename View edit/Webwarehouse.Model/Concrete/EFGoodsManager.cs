@@ -35,6 +35,7 @@ namespace Webwarehouse.Model.Concrete
             }
 
         }
+
         public bool AlreadyHaveGood(string name)
         {
             using (context = new WarehouseContext())
