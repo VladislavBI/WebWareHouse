@@ -356,7 +356,9 @@
     <Content Include="Scripts\Others\Service.js" />
     <Content Include="Scripts\validations\LoginValidation.js" />
     <Content Include="Scripts\validations\OperationValidation.js" />
-    <Content Include="Web.config" />
+    <Content Include="Web.config">
+      <SubType>Designer</SubType>
+    </Content>
     <Content Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </Content>

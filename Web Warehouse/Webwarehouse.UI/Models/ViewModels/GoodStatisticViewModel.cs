@@ -25,7 +25,7 @@ namespace Webwarehouse.UI.Models
                 {
                     //If no good is selected -
                     //on start or when deleting good.
-                    GoodName = "Товар не выбран";
+                    GoodName = "No good selected";
                 }
                 else
                 {

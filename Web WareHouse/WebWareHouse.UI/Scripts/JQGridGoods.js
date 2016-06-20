@@ -193,7 +193,7 @@ $(function ()
 function figureValid(value, colname)
 {
         //1) is positive number
-    if (value <= 0)
+    if (value.replace("\"", "") <= 0)
         return [false, "Price must be positive"];
     var commaPattern = /^\d+,*\d*$/;
     var dotPattern = /^\d+\.*\d*$/;
